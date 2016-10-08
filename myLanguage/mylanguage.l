@@ -1,53 +1,53 @@
-  // hola hola que tal
+  // mylanguage
   // FLEX  file
 %{
 #include  <stdio.h>
 #include "mylanguage.tab.h"   // the  output  of  bison on  example0.y
-void  yyerror();   // we need to  forward  declare  these  functions ,
+void  yyerror(char const *s);   // we need to  forward  declare  these  functions ,
 int  yyparse(void);     // don't worry  about  them
 %}
 
-
-
-
 INTEGER         [0-9]+
 FLOATINGPOINT   [0-9]+"."[0-9]*
-STRING          [a-z][a-zA-Z0-9\-\_]*
+STRING          [a-zA-Z0-9]*
 ID              [a-z][a-z0-9]*
 
 %%
-  // reserved keywords
+"main"                    {printf("got  MAIN  token\n"); return MAIN;}
+"def"                     {printf("got  DEF  token\n"); return DEF;}
 "num"                     {printf("got  NUM  token\n"); return NUM;}
 "lett"                    {printf("got  LETT  token\n"); return LETT;}
+"e"                       {printf("got  E  token\n"); return E;}
 "if"                      {printf("got  IF  token\n"); return IF;}
-"then"                    {printf("got  THEN  token\n"); return THEN;}
-"elseif"                  {printf("got  ELSEIF  token\n"); return ELSEIF;}
 "else"                    {printf("got  ELSE  token\n"); return ELSE;}
-"endif"                   {printf("got  ENDIF  token\n"); return ENDIF;}
-"while"                   {printf("got  WHILE  token\n"); return WHILE;}
-"endwhile"                {printf("got  ENDWHILE  token\n"); return ENDWHILE;}
 "for"                     {printf("got  FOR  token\n"); return FOR;}
-"endfor"                  {printf("got  ENDFOR  token\n"); return ENDFOR;}
 "do"                      {printf("got  DO  token\n"); return DO;}
-"("                       {printf("got  OPARENTHESIS  token\n"); return OPARENTHESIS;}
-")"                       {printf("got  CPARENTHESIS  token\n"); return CPARENTHESIS;}
-","                       {printf("got  COMMA  token\n"); return COMMA;}
+"while"                   {printf("got  WHILE  token\n"); return WHILE;}
+"("                       {printf("got  OPAR  token\n"); return OPAR;}
+")"                       {printf("got  CPAR  token\n"); return CPAR;}
+"{"                       {printf("got  OBR  token\n"); return OBR;}
+"}"                       {printf("got  CBR  token\n"); return CBR;}
 ";"                       {printf("got  SEMICOLON  token\n"); return SEMICOLON;}
+"="                       {printf("got  EQUAL  token\n"); return EQUAL;}
 "\""                      {printf("got  QUOTE  token\n"); return QUOTE;}
 {INTEGER}                 {printf( "got INTEGER: %s (%d)\n", yytext, atoi(yytext));
                            yylval.integer = atoi(yytext);
                            return INTEGER;}
-{FLOATINGPOINT}           {printf( "got FLOATINGPOINT: %s (%g)\n", yytext,atof(yytext));
+{FLOATINGPOINT}           {printf( "got FLOATINGPOINT: %s (%g)\n", yytext, atof(yytext));
                            yylval.fp = atof(yytext);
                            return FLOATINGPOINT;}
 {ID}                      {printf( "got ID: %s\n", yytext );
                            yylval.string = yytext;
                            return ID;}
+{STRING}                   {printf( "got STRING: %s (%d)\n", yytext, atoi(yytext));
+                           yylval.string = yytext;
+                           return STRING;}
 [ \t\n]+                  ;   // do  nothing  on  whitespace
-.                         {ECHO; yyerror();}
+.                         {ECHO; yyerror("error");}
+
 %%
 
-void  yyerror() {printf("ERROR: Could  not  parse !\n");}
+void  yyerror(char const *s) {fprintf (stderr, "%s\n", s);}
 int  yywrap(void) { }
 int  main(void) {
   // we don't want to do  anything  extra , just  start  the  parser
