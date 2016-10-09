@@ -39,7 +39,7 @@ ID              [a-z][a-z0-9]*
 {ID}                      {printf( "got ID: %s\n", yytext );
                            yylval.string = yytext;
                            return ID;}
-{STRING}                   {printf( "got STRING: %s (%d)\n", yytext, atoi(yytext));
+{STRING}                   {printf( "got STRING: %s \n", yytext);
                            yylval.string = yytext;
                            return STRING;}
 [ \t\n]+                  ;   // do  nothing  on  whitespace

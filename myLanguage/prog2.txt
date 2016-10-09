@@ -1,18 +1,18 @@
 def hola {
   num a1;
   lett a2;
-
 }
+
 def test {
     num t;
 }
 
 main {
-  num a;
-  lett b;
-  num c = 1;
   lett d = "e";
-  if(e){
-    num a;
-  }
+  for(num a=1; e; e){
+    lett x="e";
+    if(e){
+      lett a=10;
+    };
+  };
 }

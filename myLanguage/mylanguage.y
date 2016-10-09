@@ -17,61 +17,61 @@ extern  void  yyerror();
 
 %start  ROOT
 %token <string> MAIN DEF NUM LETT E IF ELSE FOR DO WHILE OPAR CPAR OBR CBR SEMICOLON EQUAL QUOTE INTEGER FLOATINGPOINT STRING ID
-%type <string> ROOT PROG M FUNCT BLOCK D NUMDEF X LETTDEF Y STMT COND I IE Z F W DW
+%type <string> ROOT PROG M FUNCT BLOCK  X  Y  STMT COND I IE F W DW
 
 %%
 
 ROOT:       PROG {printf(" OK ROOT\n");}
             |
             ;
-PROG:       FUNCT PROG M {printf(" PROG \n");}
+
+PROG:       FUNCT PROG M {printf("PROG \n");}
             |
             ;
-M:          MAIN OBR BLOCK CBR {printf(" en MAIN \n");}
+
+FUNCT:      DEF ID BLOCK {printf("FUNCT \n");}
             |
             ;
-FUNCT:      DEF ID OBR BLOCK CBR
+
+M:          MAIN BLOCK {printf("MAIN \n");}
             |
             ;
-BLOCK:        STMT BLOCK {printf(" D Blk \n");}
-            | {printf(" N Blk \n");}
+
+BLOCK:      OBR STMT SEMICOLON BLOCK CBR  {printf(" BR Blk \n");}
+            | STMT SEMICOLON
+            |                     {printf(" N Blk \n");}
             ;
-STMT:         D       {printf(" D\n");}
+
+STMT:         NUM ID X  {printf(" NUMDEF \n");}
+            | LETT ID Y    {printf(" LETTDEF \n");}
             | I       {printf(" I\n");}
             | F       {printf(" F\n");}
             | W       {printf(" W\n");}
             | DW      {printf(" DW\n");}
-            | COND    {printf(" CONDD\n");}
-            |         {printf(" N XX \n");}
+            | COND    {printf(" COND\n");}
             ;
-D:            NUMDEF
-            | LETTDEF
-            ;
-NUMDEF:     NUM ID X SEMICOLON  {printf(" NUMDEF \n");}
-            ;
+
 X:          EQUAL INTEGER       {printf(" EN X \n");}
             |
             ;
-LETTDEF:    LETT ID Y SEMICOLON {printf(" LETTDEF \n");}
-            ;
+
 Y:          EQUAL QUOTE E QUOTE {printf(" EN Y\n");}
             |
             ;
+
 COND:       E                   {printf(" E EN COND \n");}
             ;
 
-I:          IF OPAR COND CPAR OBR Z CBR IE      {printf(" EN IF \n");}
-            ;
-IE:         ELSE OBR Z CBR                      {printf(" IE ELSE \n");}
-            |                                   {printf(" IE NADA \n");}
-            ;
-F:          FOR OPAR NUMDEF SEMICOLON COND SEMICOLON COND CPAR OBR Z CBR
-            ;
-W:          WHILE OPAR COND CPAR OBR Z CBR
-            ;
-DW:         DO OBR Z CBR WHILE OPAR COND CPAR SEMICOLON
+I:          IF OPAR COND CPAR BLOCK IE      {printf(" EN IF \n");}
             ;
 
-Z:          STMT Z              {printf(" Z XX \n");}
-            |                   {printf(" Z NADA \n");}
+IE:         ELSE BLOCK                      {printf(" IE ELSE \n");}
+            |                                   {printf(" IE NADA \n");}
+            ;
+
+F:          FOR OPAR NUM ID EQUAL INTEGER SEMICOLON COND SEMICOLON COND CPAR BLOCK {printf(" TERMINA FOR\n");}
+            ;
+W:          WHILE OPAR COND CPAR BLOCK
+            ;
+DW:         DO BLOCK WHILE OPAR COND CPAR SEMICOLON
             ;
