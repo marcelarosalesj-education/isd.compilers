@@ -17,32 +17,29 @@ extern  void  yyerror();
 
 %start  ROOT
 %token <string> MAIN DEF NUM LETT E IF ELSE FOR DO WHILE OPAR CPAR OBR CBR SEMICOLON EQUAL QUOTE INTEGER FLOATINGPOINT STRING ID
-%type <string> ROOT PROG M FUNCT BLOCK  X  Y  STMT COND I IE F W DW
+%type <string> ROOT M FUNCTS FUNCT BLOCK  X  Y  STMT COND I IE F W DW
 
 %%
 
-ROOT:       FUNCT ROOT {printf(" OK ROOT\n");}
-            | PROG
+ROOT:       FUNCTS M {printf(" OK ROOT\n");}
             ;
 
-PROG:       M {printf("PROG \n");}
-            ;
+FUNCTS:	    FUNCT FUNCTS {printf("*-FUNCTS \n");}
+	    	|  {printf("N-FUNCTS \n");}
+	    	;
 
 FUNCT:      DEF ID BLOCK {printf("FUNCT \n");}
-            |
             ;
 
 M:          MAIN BLOCK {printf("MAIN \n");}
-            |
             ;
 
 BLOCK:      OBR LIST CBR  {printf(" BR Blk \n");}
             | STMT
-            |                     {printf(" N Blk \n");}
             ;
 
 LIST:       STMT SEMICOLON LIST
-            | STMT
+            |
             ;
 
 STMT:         NUM ID X  {printf(" NUMDEF \n");}
@@ -76,5 +73,5 @@ F:          FOR OPAR NUM ID EQUAL INTEGER SEMICOLON COND SEMICOLON COND CPAR BLO
             ;
 W:          WHILE OPAR COND CPAR BLOCK
             ;
-DW:         DO BLOCK WHILE OPAR COND CPAR SEMICOLON
+DW:         DO BLOCK WHILE OPAR COND CPAR
             ;

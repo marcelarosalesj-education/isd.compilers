@@ -12,7 +12,7 @@ main {
   for(num a=1; e; e){
     lett x="e";
     if(e){
-      lett a=10;
+      lett a="e";
     };
   };
 }
