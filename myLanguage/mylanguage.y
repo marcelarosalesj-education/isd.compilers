@@ -21,12 +21,11 @@ extern  void  yyerror();
 
 %%
 
-ROOT:       PROG {printf(" OK ROOT\n");}
-            |
+ROOT:       FUNCT ROOT {printf(" OK ROOT\n");}
+            | PROG
             ;
 
-PROG:       FUNCT PROG M {printf("PROG \n");}
-            |
+PROG:       M {printf("PROG \n");}
             ;
 
 FUNCT:      DEF ID BLOCK {printf("FUNCT \n");}
@@ -37,9 +36,13 @@ M:          MAIN BLOCK {printf("MAIN \n");}
             |
             ;
 
-BLOCK:      OBR STMT SEMICOLON BLOCK CBR  {printf(" BR Blk \n");}
-            | STMT SEMICOLON
+BLOCK:      OBR LIST CBR  {printf(" BR Blk \n");}
+            | STMT
             |                     {printf(" N Blk \n");}
+            ;
+
+LIST:       STMT SEMICOLON LIST
+            | STMT
             ;
 
 STMT:         NUM ID X  {printf(" NUMDEF \n");}
