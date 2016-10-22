@@ -17,7 +17,8 @@ extern  void  yyerror();
 
 %start  ROOT
 %token <string> MAIN DEF NUM LETT IF ELSE FOR DO WHILE OPAR CPAR OBR CBR SEMICOLON EQUAL QUOTE INTEGER FLOATINGPOINT STRING ID LT GT LET GET EQU NEQ PLUS MINUS MULT DIV AND OR NOT OB CB COMMA 
-%type <string> ROOT M FUNCTS FUNCT BLOCK  X  Y  STMT COND I IE F W DW E PRIO1 ES PRIO2 TA PRIO3 FF X1 X2 X3 X4
+%type <string> ROOT M FUNCTS FUNCT BLOCK  X  Y  STMT I IE F W DW E PRIO1 ES PRIO2 TA PRIO3 FF X1 X2 X3 X4
+
 
 %%
 
@@ -48,32 +49,31 @@ STMT:         NUM ID X  {printf(" NUMDEF \n");}
             | F       {printf(" F\n");}
             | W       {printf(" W\n");}
             | DW      {printf(" DW\n");}
-            | COND    {printf(" COND\n");}
+            | E    {printf(" E\n");}
             ;
 
 X:          EQUAL E       {printf(" EN X \n");}
             |
             ;
 
-Y:          EQUAL QUOTE ID QUOTE {printf(" EN Y\n");}
+Y:          EQUAL QUOTE STRING QUOTE {printf(" EN Y1\n");}
+			| EQUAL QUOTE ID QUOTE {printf(" EN Y2\n");}
             |
             ;
 
-COND:       E                   {printf(" E EN COND \n");}
-            ;
-
-I:          IF OPAR COND CPAR BLOCK IE      {printf(" EN IF \n");}
+I:          IF OPAR E CPAR BLOCK IE      {printf(" EN IF \n");}
             ;
 
 IE:         ELSE BLOCK                      {printf(" IE ELSE \n");}
             |                                   {printf(" IE NADA \n");}
             ;
 
-F:          FOR OPAR NUM ID EQUAL INTEGER SEMICOLON COND SEMICOLON COND CPAR BLOCK {printf(" TERMINA FOR\n");}
+F:          FOR OPAR NUM ID EQUAL INTEGER SEMICOLON E SEMICOLON E CPAR BLOCK {printf(" TERMINA FOR\n");}
             ;
-W:          WHILE OPAR COND CPAR BLOCK
+W:          WHILE OPAR E CPAR BLOCK
             ;
-DW:         DO BLOCK WHILE OPAR COND CPAR
+DW:         DO BLOCK WHILE OPAR E
+ CPAR
             ;
 E:			ES | ES PRIO1 ES;
 PRIO1:		LT | GT | LET | GET | EQU | NEQ;

@@ -1,0 +1,17 @@
+main {
+	i+2;
+	num a = 5+2;
+
+	
+	if(5>2){
+		for(num i=0; i<5; i+1){
+
+		};	
+	};
+	
+	while(a!=b){
+		do{
+			num f = 4<=1;			
+		}while(c==4);
+	};
+}
