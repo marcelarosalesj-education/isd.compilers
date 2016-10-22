@@ -16,8 +16,8 @@ extern  void  yyerror();
 }
 
 %start  ROOT
-%token <string> MAIN DEF NUM LETT E IF ELSE FOR DO WHILE OPAR CPAR OBR CBR SEMICOLON EQUAL QUOTE INTEGER FLOATINGPOINT STRING ID
-%type <string> ROOT M FUNCTS FUNCT BLOCK  X  Y  STMT COND I IE F W DW
+%token <string> MAIN DEF NUM LETT IF ELSE FOR DO WHILE OPAR CPAR OBR CBR SEMICOLON EQUAL QUOTE INTEGER FLOATINGPOINT STRING ID LT GT LET GET EQU NEQ PLUS MINUS MULT DIV AND OR NOT OB CB COMMA 
+%type <string> ROOT M FUNCTS FUNCT BLOCK  X  Y  STMT COND I IE F W DW E PRIO1 ES PRIO2 TA PRIO3 FF X1 X2 X3 X4
 
 %%
 
@@ -51,11 +51,11 @@ STMT:         NUM ID X  {printf(" NUMDEF \n");}
             | COND    {printf(" COND\n");}
             ;
 
-X:          EQUAL INTEGER       {printf(" EN X \n");}
+X:          EQUAL E       {printf(" EN X \n");}
             |
             ;
 
-Y:          EQUAL QUOTE E QUOTE {printf(" EN Y\n");}
+Y:          EQUAL QUOTE ID QUOTE {printf(" EN Y\n");}
             |
             ;
 
@@ -75,3 +75,17 @@ W:          WHILE OPAR COND CPAR BLOCK
             ;
 DW:         DO BLOCK WHILE OPAR COND CPAR
             ;
+E:			ES | ES PRIO1 ES;
+PRIO1:		LT | GT | LET | GET | EQU | NEQ;
+ES: 		TA | TA PRIO2 ES;
+PRIO2:		PLUS | MINUS | OR;
+TA: 		FF | FF PRIO3 TA;
+PRIO3: 		MULT | DIV | AND;
+FF:			INTEGER | FLOATINGPOINT | X1 ID X2;
+X1: 		PLUS | MINUS | NOT | ;
+X2:			OPAR X3 CPAR | X4;
+X3:			E | E COMMA X3;
+X4:			OB X3 CB X4 | ;
+
+
+

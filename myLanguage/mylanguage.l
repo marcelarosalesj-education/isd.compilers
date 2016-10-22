@@ -17,7 +17,6 @@ ID              [a-z][a-z0-9]*
 "def"                     {printf("got  DEF  token\n"); return DEF;}
 "num"                     {printf("got  NUM  token\n"); return NUM;}
 "lett"                    {printf("got  LETT  token\n"); return LETT;}
-"e"                       {printf("got  E  token\n"); return E;}
 "if"                      {printf("got  IF  token\n"); return IF;}
 "else"                    {printf("got  ELSE  token\n"); return ELSE;}
 "for"                     {printf("got  FOR  token\n"); return FOR;}
@@ -25,11 +24,27 @@ ID              [a-z][a-z0-9]*
 "while"                   {printf("got  WHILE  token\n"); return WHILE;}
 "("                       {printf("got  OPAR  token\n"); return OPAR;}
 ")"                       {printf("got  CPAR  token\n"); return CPAR;}
+"["                       {printf("got  OB  token\n"); return OB;}
+"]"                       {printf("got  CB  token\n"); return CB;}
 "{"                       {printf("got  OBR  token\n"); return OBR;}
 "}"                       {printf("got  CBR  token\n"); return CBR;}
 ";"                       {printf("got  SEMICOLON  token\n"); return SEMICOLON;}
+","                       {printf("got  COMMA  token\n"); return COMMA;}
 "="                       {printf("got  EQUAL  token\n"); return EQUAL;}
 "\""                      {printf("got  QUOTE  token\n"); return QUOTE;}
+"<"                       {printf("got  LT  token\n"); return LT;}
+">"                       {printf("got  GT  token\n"); return GT;}
+"<="                       {printf("got LET   token\n"); return LET;}
+">="                       {printf("got GET   token\n"); return GET;}
+"=="                       {printf("got EQU   token\n"); return EQU;}
+"!="                       {printf("got NEQ   token\n"); return NEQ;}
+"+"                       {printf("got  PLUS  token\n"); return PLUS;}
+"-"                       {printf("got  MINUS  token\n"); return MINUS;}
+"*"                       {printf("got  MULT  token\n"); return MULT;}
+"/"                       {printf("got  DIV  token\n"); return DIV;}
+"and"                       {printf("got  AND  token\n"); return AND;}
+"or"                       {printf("got  OR  token\n"); return OR;}
+"not"                       {printf("got NOT   token\n"); return NOT;}
 {INTEGER}                 {printf( "got INTEGER: %s (%d)\n", yytext, atoi(yytext));
                            yylval.integer = atoi(yytext);
                            return INTEGER;}
