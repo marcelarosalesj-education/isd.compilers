@@ -1,17 +1,23 @@
+
+def func1{
+	num a = 1;
+	a = 2;
+	for(num b=2; b<5; b+1){
+		if(b == 3){
+			b = 5;
+		};
+	};
+
+}
+
+
 main {
-	i+2;
-	num a = 5+2;
+num a;
+lett d;
+	h = h+5;
+	a = 1;
+	a[2] = 1;
+	a[3][4] = 4;
 
-	
-	if(5>2){
-		for(num i=0; i<5; i+1){
 
-		};	
-	};
-	
-	while(a!=b){
-		do{
-			num f = 4<=1;			
-		}while(c==4);
-	};
 }
