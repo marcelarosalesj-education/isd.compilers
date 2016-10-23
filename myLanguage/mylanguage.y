@@ -6,6 +6,16 @@
 #include <string.h>
 extern  int  yylex ();
 extern  void  yyerror();
+
+struct Element{
+	char *varname;
+	char *vartype;
+	int address;
+};
+
+struct Element table[100];
+int idx=0;
+
 %}
 
 
@@ -15,6 +25,8 @@ extern  void  yyerror();
   float fp;               /* Constant floating point value */
 }
 
+
+
 %start  ROOT
 %token <string> MAIN DEF NUM LETT IF ELSE FOR DO WHILE OPAR CPAR OKEY CKEY SEMICOLON EQUAL QUOTE INTEGER FLOATINGPOINT STRING ID LT GT LET GET EQU NEQ PLUS MINUS MULT DIV AND OR NOT OB CB COMMA 
 %type <string> ROOT M FUNCTS FUNCT BLOCK  X    STMT I IE F W DW E PRIO1 ES PRIO2 TA PRIO3 FF X1 X3  DECL
@@ -22,7 +34,14 @@ extern  void  yyerror();
 
 %%
 
-ROOT:       FUNCTS M {printf(" OK ROOT\n");}
+ROOT:       FUNCTS M {
+						printf(" OK ROOT   number:%d \n", idx);
+						int impr;
+						for(impr=0; impr<idx; impr++){
+							printf("name: %s type:%s \n", table[impr].varname, table[impr].vartype);
+						}
+
+					}
             ;
 
 FUNCTS:	    FUNCT FUNCTS {printf("MANY-FUNCTS \n");}
@@ -55,8 +74,22 @@ STMT:
             | ID OPAR CPAR
             ;
 
-DECL:		  NUM ID X 		{printf(" NUMDEF \n");} 
-			| LETT ID Y 	{printf(" LETTDEF \n");} 
+DECL:		  NUM ID X 		{
+							printf(" \n\nNUMDEF 2=%s  \n", $2);
+							table[idx].varname = $2;
+							table[idx].vartype = "num";
+							printf(" table %s t:%s\n", table[idx].varname, table[idx].vartype );
+							idx=idx+1;
+
+							} 
+			| LETT ID Y 	{
+							printf(" \n\nLETTDEF: 2=%s \n", $2);
+							table[idx].varname = $2;
+							table[idx].vartype = "lett";
+							printf(" table %s t:%s\n", table[idx].varname, table[idx].vartype);
+							idx=idx+1;
+
+							} 
 			;
 X:          EQUAL INTEGER      		{printf(" EN X INT\n");}
 			| EQUAL FLOATINGPOINT	{printf(" EN X FP\n");}

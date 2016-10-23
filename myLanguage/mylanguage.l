@@ -13,9 +13,9 @@ STRING          [a-zA-Z0-9]*
 ID              [a-z][a-z0-9]*
 
 %%
-"main"                    {printf("got  MAIN  token\n"); return MAIN;}
-"def"                     {printf("got  DEF  token\n"); return DEF;}
-"num"                     {printf("got  NUM  token\n"); return NUM;}
+"main"                    { return MAIN;}
+"def"                     { return DEF; }
+"num"                     { return NUM; }
 "lett"                    {printf("got  LETT  token\n"); return LETT;}
 "if"                      {printf("got  IF  token\n"); return IF;}
 "else"                    {printf("got  ELSE  token\n"); return ELSE;}
@@ -28,16 +28,16 @@ ID              [a-z][a-z0-9]*
 "]"                       {printf("got  CB  token\n"); return CB;}
 "{"                       {printf("got  OKEY  token\n"); return OKEY;}
 "}"                       {printf("got  CKEY  token\n"); return CKEY;}
-";"                       {printf("got  SEMICOLON  token\n"); return SEMICOLON;}
-","                       {printf("got  COMMA  token\n"); return COMMA;}
-"="                       {printf("got  EQUAL  token\n"); return EQUAL;}
-"\""                      {printf("got  QUOTE  token\n"); return QUOTE;}
-"<"                       {printf("got  LT  token\n"); return LT;}
-">"                       {printf("got  GT  token\n"); return GT;}
-"<="                       {printf("got LET   token\n"); return LET;}
-">="                       {printf("got GET   token\n"); return GET;}
-"=="                       {printf("got EQU   token\n"); return EQU;}
-"!="                       {printf("got NEQ   token\n"); return NEQ;}
+";"                       { return SEMICOLON;}
+","                       { return COMMA;}
+"="                       { return EQUAL;}
+"\""                      { return QUOTE;}
+"<"                       { return LT;}
+">"                       { return GT;}
+"<="                      {printf("got LET   token\n"); return LET;}
+">="                      {printf("got GET   token\n"); return GET;}
+"=="                      {printf("got EQU   token\n"); return EQU;}
+"!="                      {printf("got NEQ   token\n"); return NEQ;}
 "+"                       {printf("got  PLUS  token\n"); return PLUS;}
 "-"                       {printf("got  MINUS  token\n"); return MINUS;}
 "*"                       {printf("got  MULT  token\n"); return MULT;}
