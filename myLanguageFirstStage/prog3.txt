@@ -1,0 +1,10 @@
+
+main {
+num a;
+lett d;
+num c;
+num d;
+lett e;
+
+
+}

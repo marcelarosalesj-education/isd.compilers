@@ -1,0 +1,30 @@
+def f1{
+	if(e){
+		num a1=1;	
+	};
+}
+
+def f2{
+	lett letra1;
+	lett letra2;
+}
+
+main {
+	num a;
+	lett b;
+	num c=1;
+	lett d="e";
+	
+	if(e){
+		for(num i=0; e; e){
+			lett a="e";
+		};	
+	};
+	
+	while(e){
+		do{
+			num f;			
+			lett h="e";
+		}while(e);
+	};
+}

@@ -1,0 +1,18 @@
+def hola {
+  num a1;
+  lett a2;
+}
+
+def test {
+    num t;
+}
+
+main {
+  lett d = "e";
+  for(num a=1; e; e){
+    lett x="e";
+    if(e){
+      lett a="e";
+    };
+  };
+}
