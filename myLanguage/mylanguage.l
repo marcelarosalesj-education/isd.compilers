@@ -3,8 +3,18 @@
 %{
 #include  <stdio.h>
 #include "mylanguage.tab.h"   // the  output  of  bison on  example0.y
+#include <iostream>
+using namespace std;
+
+
 void  yyerror(char const *s);   // we need to  forward  declare  these  functions ,
 int  yyparse(void);     // don't worry  about  them
+//extern "C" int yyparse();
+
+
+#define YY_DECL extern "C" int yylex()
+
+
 %}
 
 INTEGER         [0-9]+
