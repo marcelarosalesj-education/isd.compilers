@@ -9,7 +9,6 @@ using namespace std;
 
 void  yyerror(char const *s);   // we need to  forward  declare  these  functions ,
 int  yyparse(void);     // don't worry  about  them
-//extern "C" int yyparse();
 
 
 #define YY_DECL extern "C" int yylex()
@@ -23,38 +22,41 @@ STRING          [a-zA-Z0-9]*
 ID              [a-z][a-z0-9]*
 
 %%
-"main"                    { return MAIN;}
-"def"                     { return DEF; }
+"main"                    { return MAIN;
+                          }
+"def"                     { return DEF; 
+                          }
 "num"                     { return NUM; }
-"lett"                    {printf("got  LETT  token\n"); return LETT;}
-"if"                      {printf("got  IF  token\n"); return IF;}
-"else"                    {printf("got  ELSE  token\n"); return ELSE;}
-"for"                     {printf("got  FOR  token\n"); return FOR;}
-"do"                      {printf("got  DO  token\n"); return DO;}
-"while"                   {printf("got  WHILE  token\n"); return WHILE;}
-"("                       {printf("got  OPAR  token\n"); return OPAR;}
-")"                       {printf("got  CPAR  token\n"); return CPAR;}
-"["                       {printf("got  OB  token\n"); return OB;}
-"]"                       {printf("got  CB  token\n"); return CB;}
-"{"                       {printf("got  OKEY  token\n"); return OKEY;}
-"}"                       {printf("got  CKEY  token\n"); return CKEY;}
+"lett"                    { return LETT;}
+"if"                      { return IF;}
+"else"                    { return ELSE;}
+"for"                     { return FOR;}
+"do"                      { return DO;}
+"while"                   { return WHILE;}
+"("                       { return OPAR;
+                          }
+")"                       { return CPAR;}
+"["                       { return OB;}
+"]"                       { return CB;}
+"{"                       { return OKEY;}
+"}"                       { return CKEY;}
 ";"                       { return SEMICOLON;}
 ","                       { return COMMA;}
 "="                       { return EQUAL;}
 "\""                      { return QUOTE;}
 "<"                       { return LT;}
 ">"                       { return GT;}
-"<="                      {printf("got LET   token\n"); return LET;}
-">="                      {printf("got GET   token\n"); return GET;}
-"=="                      {printf("got EQU   token\n"); return EQU;}
-"!="                      {printf("got NEQ   token\n"); return NEQ;}
-"+"                       {printf("got  PLUS  token\n"); return PLUS;}
-"-"                       {printf("got  MINUS  token\n"); return MINUS;}
-"*"                       {printf("got  MULT  token\n"); return MULT;}
-"/"                       {printf("got  DIV  token\n"); return DIV;}
-"and"                       {printf("got  AND  token\n"); return AND;}
-"or"                       {printf("got  OR  token\n"); return OR;}
-"not"                       {printf("got NOT   token\n"); return NOT;}
+"<="                      { return LET;}
+">="                      { return GET;}
+"=="                      { return EQU;}
+"!="                      { return NEQ;}
+"+"                       { return PLUS;}
+"-"                       { return MINUS;}
+"*"                       { return MULT;}
+"/"                       { return DIV;}
+"and"                     { return AND;}
+"or"                      { return OR;}
+"not"                     { return NOT;}
 {INTEGER}                 {printf( "got INTEGER: %s (%d)\n", yytext, atoi(yytext));
                            yylval.integer = atoi(yytext);
                            return INTEGER;}

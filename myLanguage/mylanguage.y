@@ -8,19 +8,12 @@
 #include <iostream>
 using namespace std;
 
-//extern  int  yylex ();
-extern  void  yyerror();
-
-
-
 // stuff from flex that bison needs to know about:
+extern  void  yyerror();
 extern "C" int yylex();
 extern "C" FILE *yyin;
  
 void yyerror(const char *s);
-
-
-
 
 struct Element{
 	string varname;
@@ -50,11 +43,9 @@ int idx=0;
 %%
 
 ROOT:       FUNCTS M {
-						//printf(" OK ROOT   number:%d \n", idx);
 						cout << "    OK ROOT num : "<<idx<<endl;
 						int impr;
 						for(impr=0; impr<idx; impr++){
-							//printf("name: %s type:%s \n", table[impr].varname, table[impr].vartype);
 							cout << "table : "<< table[impr].varname << "  , "<< table[impr].vartype << endl;
 
 						}
@@ -91,22 +82,16 @@ STMT:
             ;
 
 DECL:		  NUM ID X 		{
-							//printf(" \n\nNUMDEF 2=%s  \n", $2);
-							cout << "\n\nNUMDEF  : "<< $2<< endl;
-							table[idx].varname = $2;
+							string aux = $2;
+							table[idx].varname = aux.substr(0, aux.length()-1 );
 							table[idx].vartype = "num";
-							//printf(" table %s t:%s\n", table[idx].varname, table[idx].vartype );
-							cout << "table : "<< table[idx].varname << "  , "<< table[idx].vartype << endl;
 							idx=idx+1;
 
 							} 
-			| LETT ID Y 	{
-							//printf(" \n\nLETTDEF: 2=%s \n", $2);
-							cout << "\n\nLETTDEF  : "<< $2<< endl;
-							table[idx].varname = $2;
+			| LETT ID Y 	{							
+							string aux= $2;
+							table[idx].varname = aux.substr(0, aux.length()-1 );
 							table[idx].vartype = "lett";
-							//printf(" table %s t:%s\n", table[idx].varname, table[idx].vartype);
-							cout << "table : "<< table[idx].varname << "  , "<< table[idx].vartype << endl;
 							idx=idx+1;
 
 							} 
