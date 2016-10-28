@@ -1,8 +1,10 @@
 main {
-num primera;
-lett segunda;
-num tercera = 1;
-lett cuarta = "hola";
-
+num a;
+num b;
+num c;
+num d;
+num e;
+num suma;
+suma = a*b+c*d;
 
 }

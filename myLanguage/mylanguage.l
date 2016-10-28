@@ -7,12 +7,10 @@
 using namespace std;
 
 
-void  yyerror(char const *s);   // we need to  forward  declare  these  functions ,
-int  yyparse(void);     // don't worry  about  them
+extern void  yyerror(char const *s);   // we need to  forward  declare  these  functions ,
 
 
 #define YY_DECL extern "C" int yylex()
-
 
 %}
 
@@ -57,26 +55,30 @@ ID              [a-z][a-z0-9]*
 "and"                     { return AND;}
 "or"                      { return OR;}
 "not"                     { return NOT;}
-{INTEGER}                 {printf( "got INTEGER: %s (%d)\n", yytext, atoi(yytext));
+{INTEGER}                 {
+                           //printf( "got INTEGER: %s (%d)\n", yytext, atoi(yytext));
                            yylval.integer = atoi(yytext);
-                           return INTEGER;}
-{FLOATINGPOINT}           {printf( "got FLOATINGPOINT: %s (%g)\n", yytext, atof(yytext));
+                           return INTEGER;
+                          }
+{FLOATINGPOINT}           {
+                           //printf( "got FLOATINGPOINT: %s (%g)\n", yytext, atof(yytext));
                            yylval.fp = atof(yytext);
-                           return FLOATINGPOINT;}
-{ID}                      {printf( "got ID: %s\n", yytext );
+                           return FLOATINGPOINT;
+                          }
+{ID}                      {
+                           //printf( "got ID: %s\n", yytext );
                            yylval.string = yytext;
-                           return ID;}
-{STRING}                   {printf( "got STRING: %s \n", yytext);
+                           return ID;
+                          }
+{STRING}                  {
+                           //printf( "got STRING: %s \n", yytext);
                            yylval.string = yytext;
-                           return STRING;}
+                           return STRING;
+                          }
 [ \t\n]+                  ;   // do  nothing  on  whitespace
 .                         {ECHO; yyerror("error");}
 
 %%
-
-void  yyerror(char const *s) {fprintf (stderr, "%s\n", s);}
-int  yywrap(void) { }
-int  main(void) {
-  // we don't want to do  anything  extra , just  start  the  parser
-  yyparse ();   //  yyparse  is  defined  for us by flex
+int yywrap(){
+  return 1;
 }
