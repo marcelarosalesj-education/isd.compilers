@@ -9,7 +9,8 @@ def test {
 
 main {
   lett d = "e";
-  for(num a=1; e; e){
+  num a;
+  for(a=1; e; e){
     lett x="e";
     if(e){
       lett a="e";

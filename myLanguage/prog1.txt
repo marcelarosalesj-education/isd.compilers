@@ -14,9 +14,9 @@ main {
 	lett b;
 	num c=1;
 	lett d="e";
-	
+	num i;
 	if(e){
-		for(num i=0; e; e){
+		for(i=0; e; e){
 			lett a="e";
 		};	
 	};

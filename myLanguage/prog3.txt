@@ -1,10 +1,8 @@
-
 main {
-num a;
-lett d;
-num c;
-num d;
-lett ele;
+num primera;
+lett segunda;
+num tercera = 1;
+lett cuarta = "hola";
 
 
 }

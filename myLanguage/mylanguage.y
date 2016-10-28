@@ -18,11 +18,18 @@ void yyerror(const char *s);
 struct Element{
 	string varname;
 	string vartype;
-	int address;
 };
 
 struct Element table[100];
 int idx=0;
+
+
+string trim(string str)
+{
+    size_t first = str.find_first_not_of(' ');
+    size_t last = str.find_last_not_of(' ');
+    return str.substr(first, (last-first+1));
+}
 
 %}
 
@@ -43,10 +50,10 @@ int idx=0;
 %%
 
 ROOT:       FUNCTS M {
-						cout << "    OK ROOT num : "<<idx<<endl;
+						cout << "    OK ROOT num:"<<idx<<endl;
 						int impr;
 						for(impr=0; impr<idx; impr++){
-							cout << "table : "<< table[impr].varname << "  , "<< table[impr].vartype << endl;
+							cout << impr<<"|"<< table[impr].varname << "|"<< table[impr].vartype << endl;
 
 						}
 
@@ -83,34 +90,42 @@ STMT:
 
 DECL:		  NUM ID X 		{
 							string aux = $2;
-							table[idx].varname = aux.substr(0, aux.length()-1 );
+              if( std::string::npos != aux.find("=") ){ // It has an =
+                table[idx].varname = trim(aux.substr(0, aux.find("=")));
+              } else if ( std::string::npos != aux.find(";") ){ // It has an ;
+                table[idx].varname = trim(aux.substr(0, aux.find(";")));
+              }
 							table[idx].vartype = "num";
 							idx=idx+1;
 
 							} 
 			| LETT ID Y 	{							
 							string aux= $2;
-							table[idx].varname = aux.substr(0, aux.length()-1 );
+              if( std::string::npos != aux.find("=") ){ // It has an =
+                table[idx].varname = trim(aux.substr(0, aux.find("=")));
+              } else if ( std::string::npos != aux.find(";") ){ // It has an ;
+                table[idx].varname = trim(aux.substr(0, aux.find(";")));
+              }
 							table[idx].vartype = "lett";
 							idx=idx+1;
 
 							} 
 			;
-X:            EQUAL INTEGER      		{printf(" EN X INT\n");}
-			| EQUAL FLOATINGPOINT	{printf(" EN X FP\n");}
+X:            EQUAL INTEGER      		{;}
+			      | EQUAL FLOATINGPOINT	{;}
             |
             ;
-Y:           EQUAL QUOTE ID QUOTE 		{printf(" EN Y2\n");}
+Y:           EQUAL STRING 		{;}
             |
             ;
 
-I:          IF OPAR E CPAR BLOCK IE     {printf(" EN IF \n");}
+I:          IF OPAR E CPAR BLOCK IE     {;}
             ;
 
-IE:         ELSE BLOCK                  {printf(" IE ELSE \n");}
-            |                           {printf(" IE NADA \n");}
+IE:         ELSE BLOCK                  {;}
+            |                           {;}
             ;
-F:          FOR OPAR NUM ID EQUAL INTEGER SEMICOLON E SEMICOLON E CPAR BLOCK {printf(" TERMINA FOR\n");}	;
+F:          FOR OPAR ID EQUAL INTEGER SEMICOLON E SEMICOLON E CPAR BLOCK {;}	;
 W:          WHILE OPAR E CPAR BLOCK;
 DW:         DO BLOCK WHILE OPAR E CPAR;
 
