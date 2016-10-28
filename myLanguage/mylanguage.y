@@ -84,7 +84,7 @@ M:          MAIN BLOCK          {;}
             ;
 
 BLOCK:      OKEY LIST CKEY      {;}
-            | STMT
+            | STMT SEMICOLON
             ;
 
 LIST:       STMT SEMICOLON LIST
@@ -153,12 +153,12 @@ PRIO1:		    LT    {operadores.push("<");}
             | NEQ   {operadores.push("!=");} 
             ;
 
-ES: 		      TA {;}
+ES: 		      TA
             | TA PRIO2 ES {
                   string opn = operadores.front();  operadores.pop();
                   cout << "     2>>> operador"<<opn<<endl;
-                  int op1 = operandos.front();      operandos.pop();
                   int op2 = operandos.front();      operandos.pop();
+                  int op1 = operandos.front();      operandos.pop();
                   int res = temporales.front();     temporales.pop();
                   // Generar cuadruplo
                   cout << "CUADRUPLO:\t";
@@ -177,8 +177,8 @@ TA: 		      FF
             | FF PRIO3 TA {
                   string opn = operadores.front();  operadores.pop();
                   cout << "     3>>> operador"<<opn<<endl;
-                  int op1 = operandos.front();      operandos.pop();
                   int op2 = operandos.front();      operandos.pop();
+                  int op1 = operandos.front();      operandos.pop();
                   int res = temporales.front();     temporales.pop();
                   // Generar cuadruplo
                   cout <<"CUADRUPLO:\t";

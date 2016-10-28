@@ -5,6 +5,6 @@ num c;
 num d;
 num e;
 num suma;
-suma = a*b+c*d;
+suma = a+b*c*d;
 
 }
