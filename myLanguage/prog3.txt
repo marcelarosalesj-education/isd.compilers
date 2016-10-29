@@ -4,7 +4,9 @@ num b;
 num c;
 num d;
 num e;
+num f;
+num g;
 num suma;
-suma = a+b*c*d;
+suma = a+b*c+a*(d*e+f*g);
 
 }

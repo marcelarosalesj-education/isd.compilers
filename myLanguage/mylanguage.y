@@ -6,7 +6,7 @@
 #include <string.h>
 #include <cstdio>
 #include <iostream>
-#include <queue>
+#include <stack>
 using namespace std;
 
 extern "C" int yylex();
@@ -14,9 +14,9 @@ extern "C" FILE *yyin;
  
 void yyerror(const char *s);
 
-queue<string> operadores;
-queue<int> operandos;
-queue<int> temporales;
+stack<string> operadores;
+stack<int> operandos;
+stack<int> temporales;
 
 struct Element{
 	string varname;
@@ -42,7 +42,49 @@ int getIndex(string var){
   return -1;
 }
 
+stack<int> printstackInt(stack<int> q){
+	stack<int> ret;
+	stack<int> ret2;
+ 	while(!q.empty()){
+		int aux;
+		aux = q.top();
+		q.pop();
+		ret.push(aux);
+	}
+	cout << "------------------------------"<<endl;
+	while(!ret.empty()){
+		int aux;
+		aux = ret.top();
+		ret.pop();
+		ret2.push(aux);
+		cout << aux << " ";
+	}
+	cout << endl;
+	cout << "------------------------------"<<endl;
+	return ret2;
+}
 
+stack<string> printstackString(stack<string> q){
+	stack<string> ret;
+	stack<string> ret2;
+ 	while(!q.empty()){
+		string aux;
+		aux = q.top();
+		q.pop();
+		ret.push(aux);
+	}
+	cout << "------------------------------"<<endl;
+	while(!ret.empty()){
+		string aux;
+		aux = ret.top();
+		ret.pop();
+		ret2.push(aux);
+		cout << aux << " ";
+	}
+	cout << endl;
+	cout << "------------------------------"<<endl;
+	return ret2;
+}
 
 
 
@@ -102,7 +144,7 @@ STMT:
             ;
 
 DECL:		  NUM ID X 		{
-							string aux = $2;
+			  string aux = $2;
               if( std::string::npos != aux.find("=") ){ // It has an =
                 table[idx].varname = trim(aux.substr(0, aux.find("=")));
               } else if ( std::string::npos != aux.find(";") ){ // It has an ;
@@ -145,7 +187,7 @@ DW:         DO BLOCK WHILE OPAR E CPAR;
 E:			      ES {;} 
             | ES PRIO1 ES;
 
-PRIO1:		    LT    {operadores.push("<");} 
+PRIO1:		  LT    {operadores.push("<");} 
             | GT    {operadores.push(">");} 
             | LET   {operadores.push("<=");} 
             | GET   {operadores.push(">=");} 
@@ -153,38 +195,53 @@ PRIO1:		    LT    {operadores.push("<");}
             | NEQ   {operadores.push("!=");} 
             ;
 
-ES: 		      TA
-            | TA PRIO2 ES {
-                  string opn = operadores.front();  operadores.pop();
-                  cout << "     2>>> operador"<<opn<<endl;
-                  int op2 = operandos.front();      operandos.pop();
-                  int op1 = operandos.front();      operandos.pop();
-                  int res = temporales.front();     temporales.pop();
-                  // Generar cuadruplo
-                  cout << "CUADRUPLO:\t";
-                  cout << opn << " " << op1 << " " << op2 << " " << res << endl;
-                  operandos.push(res); 
+ES: 		  TA
+            | ES PRIO2 TA {
+            	//cout << " 2-OPERA_DORES"<<endl;
+            	//operadores = printstackString(operadores);
+            	//cout << " 2-OPERA_NDOS"<<endl;
+            	//operandos = printstackInt(operandos);
+            	//if(operadores.top() == "+" || operadores.top() == "-" || operadores.top() == "OR"  ){
+            		string opn = operadores.top();  operadores.pop();
+                  	//cout << "     2>>> operador"<<opn<<endl;
+                  	int op2 = operandos.top();      operandos.pop();
+                  	int op1 = operandos.top();      operandos.pop();
+                  	int res = temporales.top();     temporales.pop();
+                  	// Generar cuadruplo
+                  	cout << "CUADRUPLO:\t";
+                  	cout << opn << " " << op1 << " " << op2 << " " << res << endl;
+                  	operandos.push(res); 
+
+
+            	//}
+                  
               } 
 
             ;
 
-PRIO2:		    PLUS  {operadores.push("+");} 
+PRIO2:		  PLUS  {operadores.push("+");} 
             | MINUS {operadores.push("-");} 
             | OR    {operadores.push("OR");}
             ;
 
-TA: 		      FF 
-            | FF PRIO3 TA {
-                  string opn = operadores.front();  operadores.pop();
-                  cout << "     3>>> operador"<<opn<<endl;
-                  int op2 = operandos.front();      operandos.pop();
-                  int op1 = operandos.front();      operandos.pop();
-                  int res = temporales.front();     temporales.pop();
+TA: 		  FF 
+            | TA PRIO3 FF {
+             	//cout << " 3-OPERA_DORES"<<endl;
+            	//operadores = printstackString(operadores);
+            	//cout << " 3-OPERA_NDOS"<<endl;
+            	//operandos = printstackInt(operandos);
+            	//if(operadores.top() == "*" || operadores.top() == "/" || operadores.top() == "AND"  ){
+                  string opn = operadores.top();  operadores.pop();
+                  //cout << "     3>>> operador"<<opn<<endl;
+                  int op2 = operandos.top();      operandos.pop();
+                  int op1 = operandos.top();      operandos.pop();
+                  int res = temporales.top();     temporales.pop();
                   // Generar cuadruplo
                   cout <<"CUADRUPLO:\t";
                   cout << opn << " " << op1 << " " << op2 << " " << res << endl;
                   operandos.push(res); 
-              } 
+              //}
+             } 
             ;
 
 PRIO3: 	  	  MULT    {operadores.push("*");}
@@ -199,7 +256,7 @@ FF:			      INTEGER
             | X1 ID { 
 
                       int pos = getIndex( $2 ); 
-                      cout << "  ID:"<<$2<<" POS:"<<pos<<endl;
+                      //cout << "  ID:"<<$2<<" POS:"<<pos<<endl;
                       if(pos != -1){ 
                         operandos.push(pos);
                       } else {
