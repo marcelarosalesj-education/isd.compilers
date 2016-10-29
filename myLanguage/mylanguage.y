@@ -115,62 +115,61 @@ ROOT:       FUNCTS M {
 					}
             ;
 
-FUNCTS:	    FUNCT FUNCTS {printf("MANY-FUNCTS \n");}
-	    	    |  {;}
-	    	    ;
+FUNCTS:	      FUNCT FUNCTS {printf("MANY-FUNCTS \n");}
+	    	|  {;}
+	    	;
 
-FUNCT:      DEF ID BLOCK        {;}
+FUNCT:        DEF ID BLOCK        {;}
             ;
 
-M:          MAIN BLOCK          {;}
+M:            MAIN BLOCK          {;}
             ;
 
-BLOCK:      OKEY LIST CKEY      {;}
+BLOCK:        OKEY LIST CKEY      {;}
             | STMT SEMICOLON
             ;
 
-LIST:       STMT SEMICOLON LIST
+LIST:         STMT SEMICOLON LIST
             |
             ;
 
 STMT:     	
-              I       		{printf(" I\n");}
-            | F       		{printf(" F\n");}
-            | W       		{printf(" W\n");}
-            | DW     		{printf(" DW\n");}
+              I       		{;}
+            | F       		{;}
+            | W       		{;}
+            | DW     		{;}
             | DECL
             | ID X3 EQUAL E
             | ID OPAR CPAR
             ;
 
-DECL:		  NUM ID X 		{
-			  string aux = $2;
-              if( std::string::npos != aux.find("=") ){ // It has an =
-                table[idx].varname = trim(aux.substr(0, aux.find("=")));
-              } else if ( std::string::npos != aux.find(";") ){ // It has an ;
-                table[idx].varname = trim(aux.substr(0, aux.find(";")));
-              }
-							table[idx].vartype = "num";
-							idx=idx+1;
+DECL:		  NUM ID X {
+				  string aux = $2;
+	              if( std::string::npos != aux.find("=") ){ // It has an =
+	                table[idx].varname = trim(aux.substr(0, aux.find("=")));
+	              } else if ( std::string::npos != aux.find(";") ){ // It has an ;
+	                table[idx].varname = trim(aux.substr(0, aux.find(";")));
+	              }
+				  table[idx].vartype = "num";
+				  idx=idx+1;
 
-							} 
-			| LETT ID Y 	{							
-							string aux= $2;
-              if( std::string::npos != aux.find("=") ){ // It has an =
-                table[idx].varname = trim(aux.substr(0, aux.find("=")));
-              } else if ( std::string::npos != aux.find(";") ){ // It has an ;
-                table[idx].varname = trim(aux.substr(0, aux.find(";")));
-              }
-							table[idx].vartype = "lett";
-							idx=idx+1;
-
-							} 
+			  } 
+			| LETT ID Y {							
+				  string aux= $2;
+	              if( std::string::npos != aux.find("=") ){ // It has an equal
+	                table[idx].varname = trim(aux.substr(0, aux.find("=")));
+	              } else if ( std::string::npos != aux.find(";") ){ // It has an semicolon
+	                table[idx].varname = trim(aux.substr(0, aux.find(";")));
+	              }
+				  table[idx].vartype = "lett";
+				  idx=idx+1;
+			  } 
 			;
 X:            EQUAL INTEGER      		{;}
-			      | EQUAL FLOATINGPOINT	{;}
+			| EQUAL FLOATINGPOINT		{;}
             |
             ;
-Y:           EQUAL STRING 		{;}
+Y:           EQUAL STRING 				{;}
             |
             ;
 
@@ -180,12 +179,16 @@ I:          IF OPAR E CPAR BLOCK IE     {;}
 IE:         ELSE BLOCK                  {;}
             |                           {;}
             ;
+
 F:          FOR OPAR ID EQUAL INTEGER SEMICOLON E SEMICOLON E CPAR BLOCK {;}	;
+
 W:          WHILE OPAR E CPAR BLOCK;
+
 DW:         DO BLOCK WHILE OPAR E CPAR;
 
-E:			      ES {;} 
-            | ES PRIO1 ES;
+E:			  ES
+            | ES PRIO1 ES
+            ;
 
 PRIO1:		  LT    {operadores.push("<");} 
             | GT    {operadores.push(">");} 
@@ -197,24 +200,14 @@ PRIO1:		  LT    {operadores.push("<");}
 
 ES: 		  TA
             | ES PRIO2 TA {
-            	//cout << " 2-OPERA_DORES"<<endl;
-            	//operadores = printstackString(operadores);
-            	//cout << " 2-OPERA_NDOS"<<endl;
-            	//operandos = printstackInt(operandos);
-            	//if(operadores.top() == "+" || operadores.top() == "-" || operadores.top() == "OR"  ){
             		string opn = operadores.top();  operadores.pop();
-                  	//cout << "     2>>> operador"<<opn<<endl;
                   	int op2 = operandos.top();      operandos.pop();
                   	int op1 = operandos.top();      operandos.pop();
                   	int res = temporales.top();     temporales.pop();
                   	// Generar cuadruplo
                   	cout << "CUADRUPLO:\t";
                   	cout << opn << " " << op1 << " " << op2 << " " << res << endl;
-                  	operandos.push(res); 
-
-
-            	//}
-                  
+                  	operandos.push(res);                   
               } 
 
             ;
@@ -226,13 +219,7 @@ PRIO2:		  PLUS  {operadores.push("+");}
 
 TA: 		  FF 
             | TA PRIO3 FF {
-             	//cout << " 3-OPERA_DORES"<<endl;
-            	//operadores = printstackString(operadores);
-            	//cout << " 3-OPERA_NDOS"<<endl;
-            	//operandos = printstackInt(operandos);
-            	//if(operadores.top() == "*" || operadores.top() == "/" || operadores.top() == "AND"  ){
                   string opn = operadores.top();  operadores.pop();
-                  //cout << "     3>>> operador"<<opn<<endl;
                   int op2 = operandos.top();      operandos.pop();
                   int op1 = operandos.top();      operandos.pop();
                   int res = temporales.top();     temporales.pop();
@@ -240,7 +227,6 @@ TA: 		  FF
                   cout <<"CUADRUPLO:\t";
                   cout << opn << " " << op1 << " " << op2 << " " << res << endl;
                   operandos.push(res); 
-              //}
              } 
             ;
 
@@ -250,13 +236,11 @@ PRIO3: 	  	  MULT    {operadores.push("*");}
             ;
 
 
-FF:			      INTEGER 
+FF:			  INTEGER 
             | FLOATINGPOINT 
             | X1 OPAR E CPAR
             | X1 ID { 
-
                       int pos = getIndex( $2 ); 
-                      //cout << "  ID:"<<$2<<" POS:"<<pos<<endl;
                       if(pos != -1){ 
                         operandos.push(pos);
                       } else {
@@ -271,7 +255,10 @@ X3: 		     OB E CB X3 | ;
 
 %%
 
-void  yyerror(char const *s) {fprintf (stderr, "%s\n", s);}
+void  yyerror(char const *s) {
+	fprintf (stderr, "%s\n", s);
+}
+
 int  main(void) {
 
   temporales.push(101);
@@ -285,7 +272,6 @@ int  main(void) {
   temporales.push(109);
   temporales.push(110);
 
-  // we don't want to do  anything  extra , just  start  the  parser
   return yyparse ();   //  yyparse  is  defined  for us by flex
 
   
