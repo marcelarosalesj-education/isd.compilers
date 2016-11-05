@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <iostream>
 #include <stack>
+#include<sstream>
 using namespace std;
 
 extern "C" int yylex();
@@ -17,6 +18,10 @@ void yyerror(const char *s);
 stack<string> operadores;
 stack<int> operandos;
 stack<int> temporales;
+stack<int> saltos;
+int idxCuad = 0;
+
+string cuadruplos[100][5];
 
 struct Element{
 	string varname;
@@ -26,6 +31,7 @@ struct Element{
 struct Element table[100];
 int idx=0;
 
+std::stringstream ss;
 
 string trim(string str)
 {
@@ -112,6 +118,12 @@ ROOT:       FUNCTS M {
 
 						}
 
+            cout << "CUADRUPLO"<<endl;
+            for(impr=0; impr<idxCuad; impr++){
+              cout << cuadruplos[impr][0] << " " << cuadruplos[impr][1] << " " << cuadruplos[impr][2] << " " << cuadruplos[impr][3] << endl;
+            }
+
+
 					}
             ;
 
@@ -154,6 +166,16 @@ STMT:
                   // Generar cuadruplo
                   cout << "CUADRUPLO:\t";
                   cout << "=" << " " << re << " " << id << endl;
+                  cuadruplos[idxCuad][0] = "=";
+                  ss.str(std::string());
+                  ss << re;
+                  cuadruplos[idxCuad][1] = ss.str();
+                  cuadruplos[idxCuad][2] = "int/float";
+                  ss.str(std::string());
+                  ss << id;
+                  cuadruplos[idxCuad][3] = ss.str();
+                  idxCuad++;
+
               }
 
             | ID OPAR CPAR
@@ -183,6 +205,13 @@ X:            EQUAL INTEGER  {
                   // Generar cuadruplo
                   cout << "CUADRUPLO:\t";
                   cout << "=" << " " << re <<"i"<< " " << id << endl;
+                  cuadruplos[idxCuad][0] = "=";
+                  cuadruplos[idxCuad][1] = re;
+                  cuadruplos[idxCuad][2] = "int";
+                  ss.str(std::string());
+                  ss << id;
+                  cuadruplos[idxCuad][3] = ss.str();
+                  idxCuad++;
               }	
 			      | EQUAL FLOATINGPOINT {
                   string aux = $1;
@@ -192,6 +221,13 @@ X:            EQUAL INTEGER  {
                   // Generar cuadruplo
                   cout << "CUADRUPLO:\t";
                   cout << "=" << " " << re <<"f"<< " " << id << endl;
+                  cuadruplos[idxCuad][0] = "=";
+                  cuadruplos[idxCuad][1] = re;
+                  cuadruplos[idxCuad][2] = "float";
+                  ss.str(std::string());
+                  ss << id;
+                  cuadruplos[idxCuad][3] = ss.str();
+                  idxCuad++;
               } 
             |
             ;
@@ -204,6 +240,13 @@ Y:           EQUAL STRING {
                   // Generar cuadruplo
                   cout << "CUADRUPLO:\t";
                   cout << "=" << " " << re <<"s"<< " " << id << endl;
+                  cuadruplos[idxCuad][0] = "=";
+                  cuadruplos[idxCuad][1] = re;
+                  cuadruplos[idxCuad][2] = "string";
+                  ss.str(std::string());
+                  ss << id;
+                  cuadruplos[idxCuad][3] = ss.str();
+                  idxCuad++;
               } 
             |
             ;
@@ -242,7 +285,18 @@ ES: 		  TA
                   	// Generar cuadruplo
                   	cout << "CUADRUPLO:\t";
                   	cout << opn << " " << op1 << " " << op2 << " " << res << endl;
-                  	operandos.push(res);                   
+                    cuadruplos[idxCuad][0] = opn;
+                    ss.str(std::string());
+                    ss << op1;
+                    cuadruplos[idxCuad][1] = ss.str();
+                    ss.str(std::string());
+                    ss << op2;
+                    cuadruplos[idxCuad][2] = ss.str();
+                    ss.str(std::string());
+                    ss << res;
+                    cuadruplos[idxCuad][3] = ss.str();
+                    idxCuad++;
+                  	operandos.push(res);
               } 
 
             ;
@@ -261,6 +315,17 @@ TA: 		  FF
                   // Generar cuadruplo
                   cout <<"CUADRUPLO:\t";
                   cout << opn << " " << op1 << " " << op2 << " " << res << endl;
+                  cuadruplos[idxCuad][0] = opn;
+                  ss.str(std::string());
+                  ss << op1;
+                  cuadruplos[idxCuad][1] = ss.str();
+                  ss.str(std::string());
+                  ss << op2;
+                  cuadruplos[idxCuad][2] = ss.str();
+                  ss.str(std::string());
+                  ss << res;
+                  cuadruplos[idxCuad][3] = ss.str();
+                  idxCuad++;
                   operandos.push(res); 
              } 
             ;

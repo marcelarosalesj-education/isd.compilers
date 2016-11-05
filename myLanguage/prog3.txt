@@ -11,4 +11,8 @@ main {
 	lett h;
 	lett i = "hola";
 
+	if(a > b){
+		a=1;
+	};
+
 }
