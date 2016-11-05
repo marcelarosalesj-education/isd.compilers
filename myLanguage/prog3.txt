@@ -13,6 +13,9 @@ main {
 
 	if(a > b){
 		a=1;
+	} else {
+		b=1;
+		c=a+b;
 	};
 
 }

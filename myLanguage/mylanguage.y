@@ -120,7 +120,7 @@ ROOT:       FUNCTS M {
 
             cout << "CUADRUPLO"<<endl;
             for(impr=0; impr<idxCuad; impr++){
-              cout << cuadruplos[impr][0] << " " << cuadruplos[impr][1] << " " << cuadruplos[impr][2] << " " << cuadruplos[impr][3] << endl;
+              cout << impr << "\t"<< cuadruplos[impr][0] << " " << cuadruplos[impr][1] << " " << cuadruplos[impr][2] << " " << cuadruplos[impr][3] << endl;
             }
 
 
@@ -128,8 +128,8 @@ ROOT:       FUNCTS M {
             ;
 
 FUNCTS:	      FUNCT FUNCTS {printf("MANY-FUNCTS \n");}
-	    	|  {;}
-	    	;
+	    	    |  {;}
+	    	    ;
 
 FUNCT:        DEF ID BLOCK        {;}
             ;
@@ -251,10 +251,48 @@ Y:           EQUAL STRING {
             |
             ;
 
-I:          IF OPAR E CPAR BLOCK IE     {;}
+I:          IF OPAR E CPAR {
+              int re = operandos.top();      operandos.pop();
+              // Pendiente validar que el tipo sea bool. Tendria que usar un stack de tipos o algo asi
+              // Generar cuadruplo
+              cout << "CUADRUPLO:\t";
+              cout << "GOTOF" << " " << re << endl;
+              cuadruplos[idxCuad][0] = "GOTOF";
+              ss.str(std::string());
+              ss << re;
+              cuadruplos[idxCuad][1] = ss.str();
+              idxCuad++;
+
+              saltos.push(idxCuad-1);
+
+
+            } BLOCK IE     {
+              int dir = saltos.top(); saltos.pop();
+              // Rellena con idxCuad lo que se obtuvo en dir
+              ss.str(std::string());
+              ss << idxCuad;
+              cuadruplos[dir][2] = ss.str();
+
+            }
             ;
 
-IE:         ELSE BLOCK                  {;}
+IE:         ELSE {
+              int dir = saltos.top(); saltos.pop();
+
+              // Generar cuadruplo
+              cout << "CUADRUPLO:\t";
+              cout << "GOTO" << endl;
+              cuadruplos[idxCuad][0] = "GOTO";
+              idxCuad++;
+
+              saltos.push(idxCuad-1);
+
+              // Rellena con idxCuad lo que se obtuvo en dir
+              ss.str(std::string());
+              ss << idxCuad;
+              cuadruplos[dir][2] = ss.str();
+
+            } BLOCK                  {;}
             |                           {;}
             ;
 
