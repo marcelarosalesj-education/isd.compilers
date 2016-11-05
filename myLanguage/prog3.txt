@@ -1,12 +1,14 @@
 main {
-num a;
-num b;
-num c;
-num d;
-num e;
-num f;
-num g;
-num suma;
-suma = a+b*c+a*(d*e+f*g);
+	num a = 7;
+	num b = 8.7;
+	num c;
+	num d;
+	num e;
+	num f;
+	num g;
+	num suma;
+	suma = a+b*c+a*(d*e+f*g);
+	lett h;
+	lett i = "hola";
 
 }

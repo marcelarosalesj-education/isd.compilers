@@ -139,37 +139,72 @@ STMT:
             | W       		{;}
             | DW     		{;}
             | DECL
-            | ID X3 EQUAL E
+            | ID {
+                  string aux = $1;
+                  if( std::string::npos != aux.find("=") ){ // It has an =
+                    aux = trim(aux.substr(0, aux.find("=")));
+                  } else if ( std::string::npos != aux.find(";") ){ // It has an ;
+                    aux = trim(aux.substr(0, aux.find(";")));
+                  }
+                  operandos.push(getIndex(aux));
+              } X3 EQUAL E {
+                  
+                  int re = operandos.top();      operandos.pop();
+                  int id = operandos.top();      operandos.pop();
+                  // Generar cuadruplo
+                  cout << "CUADRUPLO:\t";
+                  cout << "=" << " " << re << " " << id << endl;
+              }
+
             | ID OPAR CPAR
             ;
 
-DECL:		  NUM ID X {
-				  string aux = $2;
-	              if( std::string::npos != aux.find("=") ){ // It has an =
-	                table[idx].varname = trim(aux.substr(0, aux.find("=")));
-	              } else if ( std::string::npos != aux.find(";") ){ // It has an ;
-	                table[idx].varname = trim(aux.substr(0, aux.find(";")));
-	              }
-				  table[idx].vartype = "num";
-				  idx=idx+1;
-
-			  } 
-			| LETT ID Y {							
-				  string aux= $2;
-	              if( std::string::npos != aux.find("=") ){ // It has an equal
-	                table[idx].varname = trim(aux.substr(0, aux.find("=")));
-	              } else if ( std::string::npos != aux.find(";") ){ // It has an semicolon
-	                table[idx].varname = trim(aux.substr(0, aux.find(";")));
-	              }
-				  table[idx].vartype = "lett";
-				  idx=idx+1;
-			  } 
+DECL:		  NUM ID {
+                string aux = $2;
+                table[idx].varname = aux;
+                table[idx].vartype = "num";
+                operandos.push(idx);
+                idx=idx+1;
+        } X 
+			| LETT ID {
+                string aux = $2;
+                table[idx].varname = aux;
+                table[idx].vartype = "lett";
+                operandos.push(idx);
+                idx=idx+1;
+        } Y
 			;
-X:            EQUAL INTEGER      		{;}
-			| EQUAL FLOATINGPOINT		{;}
+
+X:            EQUAL INTEGER  {
+                  string aux = $1;
+                  string re = trim(aux.substr(aux.find("=")+1, aux.size() ) );
+                  int id = operandos.top();      operandos.pop();
+                  
+                  // Generar cuadruplo
+                  cout << "CUADRUPLO:\t";
+                  cout << "=" << " " << re <<"i"<< " " << id << endl;
+              }	
+			      | EQUAL FLOATINGPOINT {
+                  string aux = $1;
+                  string re = trim(aux.substr(aux.find("=")+1, aux.size() ) );
+                  int id = operandos.top();      operandos.pop();
+                  
+                  // Generar cuadruplo
+                  cout << "CUADRUPLO:\t";
+                  cout << "=" << " " << re <<"f"<< " " << id << endl;
+              } 
             |
             ;
-Y:           EQUAL STRING 				{;}
+
+Y:           EQUAL STRING {
+                  string aux = $1;
+                  string re = trim(aux.substr(aux.find("=")+1, aux.size() ) );
+                  int id = operandos.top();      operandos.pop();
+                  
+                  // Generar cuadruplo
+                  cout << "CUADRUPLO:\t";
+                  cout << "=" << " " << re <<"s"<< " " << id << endl;
+              } 
             |
             ;
 
@@ -200,7 +235,7 @@ PRIO1:		  LT    {operadores.push("<");}
 
 ES: 		  TA
             | ES PRIO2 TA {
-            		string opn = operadores.top();  operadores.pop();
+            		    string opn = operadores.top();  operadores.pop();
                   	int op2 = operandos.top();      operandos.pop();
                   	int op1 = operandos.top();      operandos.pop();
                   	int res = temporales.top();     temporales.pop();
