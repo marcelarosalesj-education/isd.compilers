@@ -153,19 +153,23 @@ STMT:
             | DECL
             | ID {
                   string aux = $1;
+                  cout << " >" <<aux<<endl;
                   if( std::string::npos != aux.find("=") ){ // It has an =
                     aux = trim(aux.substr(0, aux.find("=")));
                   } else if ( std::string::npos != aux.find(";") ){ // It has an ;
                     aux = trim(aux.substr(0, aux.find(";")));
                   }
+                  cout << " >>"<<aux<<endl;
+                  cout << " >>>"<<getIndex(aux)<<endl;
                   operandos.push(getIndex(aux));
               } X3 EQUAL E {
-                  
                   int re = operandos.top();      operandos.pop();
                   int id = operandos.top();      operandos.pop();
+                  
+                  
                   // Generar cuadruplo
                   cout << "CUADRUPLO:\t";
-                  cout << "=" << " " << re << " " << id << endl;
+                  cout << "stmt=" << " " << re << " int/float " << id << endl;
                   cuadruplos[idxCuad][0] = "=";
                   ss.str(std::string());
                   ss << re;
@@ -174,6 +178,7 @@ STMT:
                   ss.str(std::string());
                   ss << id;
                   cuadruplos[idxCuad][3] = ss.str();
+                  
                   idxCuad++;
 
               }
@@ -337,13 +342,56 @@ W:          WHILE {
 
             };
 
-DW:         DO BLOCK WHILE OPAR E CPAR;
+DW:         DO {
+              saltos.push(idxCuad);
 
-E:			  ES
-            | ES PRIO1 ES
+            } BLOCK WHILE OPAR E CPAR {
+              int re = operandos.top(); operandos.pop();
+
+              // Pendiente validar qeu sea bool re
+
+              int dir = saltos.top(); saltos.pop();
+
+              // Generar cuadruplo
+              cout << "CUADRUPLO:\t";
+              cout << "GOTOV" << " " << re << " " << dir << endl;
+              cuadruplos[idxCuad][0] = "GOTOV";
+              ss.str(std::string());
+              ss << re;
+              cuadruplos[idxCuad][1] = ss.str();
+              ss.str(std::string());
+              ss << dir;
+              cuadruplos[idxCuad][2] = ss.str();
+              idxCuad++;
+
+            }
             ;
 
-PRIO1:		  LT    {operadores.push("<");} 
+E:			  ES
+            | ES PRIO1 ES {
+                    string opn = operadores.top();  operadores.pop();
+                    int op2 = operandos.top();      operandos.pop();
+                    int op1 = operandos.top();      operandos.pop();
+                    int res = temporales.top();     temporales.pop();
+                    // Generar cuadruplo
+                    cout << "CUADRUPLO:\t";
+                    cout << opn << " " << op1 << " " << op2 << " " << res << endl;
+                    cuadruplos[idxCuad][0] = opn;
+                    ss.str(std::string());
+                    ss << op1;
+                    cuadruplos[idxCuad][1] = ss.str();
+                    ss.str(std::string());
+                    ss << op2;
+                    cuadruplos[idxCuad][2] = ss.str();
+                    ss.str(std::string());
+                    ss << res;
+                    cuadruplos[idxCuad][3] = ss.str();
+                    idxCuad++;
+                    operandos.push(res);
+              }
+            ;
+
+PRIO1:		    LT    {operadores.push("<");} 
             | GT    {operadores.push(">");} 
             | LET   {operadores.push("<=");} 
             | GET   {operadores.push(">=");} 
@@ -411,8 +459,12 @@ PRIO3: 	  	  MULT    {operadores.push("*");}
             ;
 
 
-FF:			  INTEGER 
-            | FLOATINGPOINT 
+FF:			      INTEGER {
+                ;
+              }
+            | FLOATINGPOINT {
+                ;
+              }
             | X1 OPAR E CPAR
             | X1 ID { 
                       int pos = getIndex( $2 ); 
@@ -446,6 +498,26 @@ int  main(void) {
   temporales.push(108);
   temporales.push(109);
   temporales.push(110);
+  temporales.push(111);
+  temporales.push(112);
+  temporales.push(113);
+  temporales.push(114);
+  temporales.push(115);
+  temporales.push(116);
+  temporales.push(117);
+  temporales.push(118);
+  temporales.push(119);
+  temporales.push(120);
+  temporales.push(121);
+  temporales.push(122);
+  temporales.push(123);
+  temporales.push(124);
+  temporales.push(125);
+  temporales.push(126);
+  temporales.push(127);
+  temporales.push(128);
+  temporales.push(129);
+  temporales.push(130);
 
   return yyparse ();   //  yyparse  is  defined  for us by flex
 

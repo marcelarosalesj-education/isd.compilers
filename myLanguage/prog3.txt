@@ -14,7 +14,7 @@ main {
 	if(a > b){
 		a=1;
 	} else {
-		b=1;
+		b=2;
 		c=a+b;
 	};
 
@@ -22,4 +22,9 @@ main {
 		a=c;
 		c=e;
 	};
+
+	do{
+		f=g;
+		d=c;
+	} while(f<d);
 }
