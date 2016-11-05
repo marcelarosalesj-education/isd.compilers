@@ -18,4 +18,8 @@ main {
 		c=a+b;
 	};
 
+	while(a>b){
+		a=c;
+		c=e;
+	};
 }

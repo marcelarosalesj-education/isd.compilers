@@ -298,7 +298,44 @@ IE:         ELSE {
 
 F:          FOR OPAR ID EQUAL INTEGER SEMICOLON E SEMICOLON E CPAR BLOCK {;}	;
 
-W:          WHILE OPAR E CPAR BLOCK;
+W:          WHILE {
+              saltos.push(idxCuad);
+
+            } OPAR E CPAR {
+              int re = operandos.top(); operandos.pop();
+              // Pendiente validar qeu sea bool re
+
+              // Generar cuadruplo
+              cout << "CUADRUPLO:\t";
+              cout << "GOTOF" << " " << re << endl;
+              cuadruplos[idxCuad][0] = "GOTOF";
+              ss.str(std::string());
+              ss << re;
+              cuadruplos[idxCuad][1] = ss.str();
+              idxCuad++;
+
+              saltos.push(idxCuad-1);
+
+
+            } BLOCK {
+              int dir1 = saltos.top(); saltos.pop();
+              int dir2 = saltos.top(); saltos.pop();
+               // Generar cuadruplo
+              cout << "CUADRUPLO:\t";
+              cout << "GOTO" << " " << dir2 << endl;
+              cuadruplos[idxCuad][0] = "GOTO";
+              ss.str(std::string());
+              ss << dir2;
+              cuadruplos[idxCuad][1] = ss.str();
+              idxCuad++;
+
+              // Rellena con idxCuad lo que se obtuvo en dir
+              ss.str(std::string());
+              ss << idxCuad;
+              cuadruplos[dir1][2] = ss.str();
+
+
+            };
 
 DW:         DO BLOCK WHILE OPAR E CPAR;
 
