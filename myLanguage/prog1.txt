@@ -1,5 +1,6 @@
 def f1{
-	if(e){
+	num a;
+	if(a<5){
 		num a1=1;	
 	};
 }
@@ -13,18 +14,18 @@ main {
 	num a;
 	lett b;
 	num c=1;
-	lett d="e";
+	lett d="hi";
 	num i;
-	if(e){
-		for(i=0; e; e){
-			lett a="e";
+	if(4<5){
+		for(i=0; i<5; i+1){
+			lett a="bye";
 		};	
 	};
 	
-	while(e){
+	while(1 and c){
 		do{
 			num f;			
-			lett h="e";
-		}while(e);
+			lett h="eeee";
+		}while(f);
 	};
 }

@@ -11,7 +11,7 @@ main {
 	lett h;
 	lett i = "hola";
 
-	if(a > b){
+	if( (5 > a) and (1<b) ) {
 		a=1;
 	} else {
 		b=2;
@@ -26,5 +26,5 @@ main {
 	do{
 		f=g;
 		d=c;
-	} while(f<d);
+	} while(f<5);
 }
