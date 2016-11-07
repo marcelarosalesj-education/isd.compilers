@@ -17,11 +17,12 @@ void yyerror(const char *s);
 
 stack<string> operadores;
 stack<int> operandos;
+stack<float> constantes;
 stack<int> temporales;
 stack<int> saltos;
 int idxCuad = 0;
 
-string cuadruplos[100][5];
+string cuadruplos[100][6];
 
 struct Element{
 	string varname;
@@ -103,25 +104,33 @@ stack<string> printstackString(stack<string> q){
 }
 
 %start  ROOT
-%token <string> MAIN DEF NUM LETT IF ELSE FOR DO WHILE OPAR CPAR OKEY CKEY SEMICOLON EQUAL QUOTE INTEGER FLOATINGPOINT STRING ID LT GT LET GET EQU NEQ PLUS MINUS MULT DIV AND OR NOT OB CB COMMA 
+%token <string> MAIN DEF NUM LETT IF ELSE FOR DO WHILE OPAR CPAR OKEY CKEY SEMICOLON EQUAL QUOTE STRING ID LT GT LET GET EQU NEQ PLUS MINUS MULT DIV AND OR NOT OB CB COMMA 
+%token <integer> INTEGER
+%token <fp> FLOATINGPOINT
 %type <string> ROOT M FUNCTS FUNCT BLOCK  X    STMT I IE F W DW E PRIO1 ES PRIO2 TA PRIO3 FF X1 X3  DECL
 
 
 %%
 
 ROOT:       FUNCTS M {
-						cout << "    OK ROOT" << endl<<endl;
-						int impr;
-            cout << "Num of variables: "<<idx<<endl;
-						for(impr=0; impr<idx; impr++){
-							cout << impr<<"|"<< table[impr].varname << "|"<< table[impr].vartype << endl;
+				cout << "    OK ROOT" << endl<<endl;
+				int impr;
+				cout << "TABLA DE SIMBOLOS"<<endl;
+    			cout << "Num of variables: "<<idx<<endl;
+				for(impr=0; impr<idx; impr++){
+					cout << impr<<"|"<< table[impr].varname << "|"<< table[impr].vartype << endl;
 
-						}
+				}
 
-            cout << "CUADRUPLO"<<endl;
-            for(impr=0; impr<idxCuad; impr++){
-              cout << impr << "\t"<< cuadruplos[impr][0] << " " << cuadruplos[impr][1] << " " << cuadruplos[impr][2] << " " << cuadruplos[impr][3] << endl;
-            }
+	            cout << "CUADRUPLO"<<endl;
+	            for(impr=0; impr<idxCuad; impr++){
+	              cout << impr << "\t";
+	              for(int c=0; c<6; c++){
+	              	 cout << cuadruplos[impr][c] << " ";
+	              }
+
+	              cout << endl;
+	            }
 
 
 					}
@@ -153,34 +162,48 @@ STMT:
             | DECL
             | ID {
                   string aux = $1;
-                  cout << " >" <<aux<<endl;
+                  //cout << " >" <<aux<<endl;
                   if( std::string::npos != aux.find("=") ){ // It has an =
                     aux = trim(aux.substr(0, aux.find("=")));
                   } else if ( std::string::npos != aux.find(";") ){ // It has an ;
                     aux = trim(aux.substr(0, aux.find(";")));
                   }
-                  cout << " >>"<<aux<<endl;
-                  cout << " >>>"<<getIndex(aux)<<endl;
+                  //cout << " >>"<<aux<<endl;
+                  //cout << " >>>dir:"<<getIndex(aux)<<endl;
                   operandos.push(getIndex(aux));
               } X3 EQUAL E {
                   int re = operandos.top();      operandos.pop();
                   int id = operandos.top();      operandos.pop();
                   
-                  
                   // Generar cuadruplo
                   cout << "CUADRUPLO:\t";
-                  cout << "stmt=" << " " << re << " int/float " << id << endl;
-                  cuadruplos[idxCuad][0] = "=";
-                  ss.str(std::string());
-                  ss << re;
-                  cuadruplos[idxCuad][1] = ss.str();
-                  cuadruplos[idxCuad][2] = "int/float";
-                  ss.str(std::string());
-                  ss << id;
-                  cuadruplos[idxCuad][3] = ss.str();
+                  if(re != -1){
+	                  cout << "=" << " " << re << id << endl;
+	                  cuadruplos[idxCuad][0] = "=";
+	                  ss.str(std::string());
+	                  ss << re;
+	                  cuadruplos[idxCuad][1] = ss.str();
+	                  cuadruplos[idxCuad][2] = "dir";
+	                  ss.str(std::string());
+	                  ss << id;
+	                  cuadruplos[idxCuad][3] = ss.str();
+	                  
+	                  idxCuad++;
+                  } else {
+                  	  float ref = constantes.top(); constantes.pop();
+                  	  cout << "=" << " " << ref << " num " << id << endl;
+	                  cuadruplos[idxCuad][0] = "=";
+	                  ss.str(std::string());
+	                  ss << ref;
+	                  cuadruplos[idxCuad][1] = ss.str();
+	                  cuadruplos[idxCuad][2] = "num";
+	                  ss.str(std::string());
+	                  ss << id;
+	                  cuadruplos[idxCuad][3] = ss.str();
+	                  
+	                  idxCuad++;	
+                  }
                   
-                  idxCuad++;
-
               }
 
             | ID OPAR CPAR
@@ -204,15 +227,15 @@ DECL:		  NUM ID {
 
 X:            EQUAL INTEGER  {
                   string aux = $1;
-                  string re = trim(aux.substr(aux.find("=")+1, aux.size() ) );
+                  string re = trim(aux.substr(aux.find("=")+1, aux.size() ) ); // get integer
                   int id = operandos.top();      operandos.pop();
                   
                   // Generar cuadruplo
                   cout << "CUADRUPLO:\t";
-                  cout << "=" << " " << re <<"i"<< " " << id << endl;
+                  cout << "=" << " " << re <<" num "<< " " << id << endl;
                   cuadruplos[idxCuad][0] = "=";
                   cuadruplos[idxCuad][1] = re;
-                  cuadruplos[idxCuad][2] = "int";
+                  cuadruplos[idxCuad][2] = " num ";
                   ss.str(std::string());
                   ss << id;
                   cuadruplos[idxCuad][3] = ss.str();
@@ -225,10 +248,10 @@ X:            EQUAL INTEGER  {
                   
                   // Generar cuadruplo
                   cout << "CUADRUPLO:\t";
-                  cout << "=" << " " << re <<"f"<< " " << id << endl;
+                  cout << "=" << " " << re <<" num "<< " " << id << endl;
                   cuadruplos[idxCuad][0] = "=";
                   cuadruplos[idxCuad][1] = re;
-                  cuadruplos[idxCuad][2] = "float";
+                  cuadruplos[idxCuad][2] = " num ";
                   ss.str(std::string());
                   ss << id;
                   cuadruplos[idxCuad][3] = ss.str();
@@ -244,10 +267,10 @@ Y:           EQUAL STRING {
                   
                   // Generar cuadruplo
                   cout << "CUADRUPLO:\t";
-                  cout << "=" << " " << re <<"s"<< " " << id << endl;
+                  cout << "=" << " " << re <<" lett "<< " " << id << endl;
                   cuadruplos[idxCuad][0] = "=";
                   cuadruplos[idxCuad][1] = re;
-                  cuadruplos[idxCuad][2] = "string";
+                  cuadruplos[idxCuad][2] = "lett";
                   ss.str(std::string());
                   ss << id;
                   cuadruplos[idxCuad][3] = ss.str();
@@ -261,14 +284,28 @@ I:          IF OPAR E CPAR {
               // Pendiente validar que el tipo sea bool. Tendria que usar un stack de tipos o algo asi
               // Generar cuadruplo
               cout << "CUADRUPLO:\t";
-              cout << "GOTOF" << " " << re << endl;
-              cuadruplos[idxCuad][0] = "GOTOF";
-              ss.str(std::string());
-              ss << re;
-              cuadruplos[idxCuad][1] = ss.str();
-              idxCuad++;
+              if(re != -1){
+              	  cout << "GOTOF" << " " << re << endl;
+	              cuadruplos[idxCuad][0] = "GOTOF";
+	              ss.str(std::string());
+	              ss << re;
+	              cuadruplos[idxCuad][1] = ss.str();
+	              idxCuad++;
+	              saltos.push(idxCuad-1);
+              } else {
+              	  float ref = constantes.top(); constantes.pop();
+              	  cout << "GOTOF" << " " << ref << " num "<< endl;
+	              cuadruplos[idxCuad][0] = "GOTOF";
+	              ss.str(std::string());
+	              ss << ref;
+	              cuadruplos[idxCuad][1] = ss.str();
+	              cuadruplos[idxCuad][3] = "num";
+	              idxCuad++;
+	              saltos.push(idxCuad-1);
 
-              saltos.push(idxCuad-1);
+              }
+              
+              
 
 
             } BLOCK IE     {
@@ -312,15 +349,27 @@ W:          WHILE {
 
               // Generar cuadruplo
               cout << "CUADRUPLO:\t";
-              cout << "GOTOF" << " " << re << endl;
-              cuadruplos[idxCuad][0] = "GOTOF";
-              ss.str(std::string());
-              ss << re;
-              cuadruplos[idxCuad][1] = ss.str();
-              idxCuad++;
+              if(re != -1){
+	              cout << "GOTOF" << " " << re << endl;
+	              cuadruplos[idxCuad][0] = "GOTOF";
+	              ss.str(std::string());
+	              ss << re;
+	              cuadruplos[idxCuad][1] = ss.str();
+	              idxCuad++;
+	              saltos.push(idxCuad-1);
+              } else {
+              	  float ref = constantes.top(); constantes.pop();
+              	  cout << "GOTOF" << " " << ref << endl;
+	              cuadruplos[idxCuad][0] = "GOTOF";
+	              ss.str(std::string());
+	              ss << ref;
+	              cuadruplos[idxCuad][1] = ss.str();
+	              cuadruplos[idxCuad][3] = "num";
+	              idxCuad++;
+	              saltos.push(idxCuad-1);
 
-              saltos.push(idxCuad-1);
-
+              }
+              
 
             } BLOCK {
               int dir1 = saltos.top(); saltos.pop();
@@ -354,16 +403,30 @@ DW:         DO {
 
               // Generar cuadruplo
               cout << "CUADRUPLO:\t";
-              cout << "GOTOV" << " " << re << " " << dir << endl;
-              cuadruplos[idxCuad][0] = "GOTOV";
-              ss.str(std::string());
-              ss << re;
-              cuadruplos[idxCuad][1] = ss.str();
-              ss.str(std::string());
-              ss << dir;
-              cuadruplos[idxCuad][2] = ss.str();
-              idxCuad++;
+              if( re != -1){
+              	  cout << "GOTOV" << " " << re << " " << dir << endl;
+	              cuadruplos[idxCuad][0] = "GOTOV";
+	              ss.str(std::string());
+	              ss << re;
+	              cuadruplos[idxCuad][1] = ss.str();
+	              ss.str(std::string());
+	              ss << dir;
+	              cuadruplos[idxCuad][2] = ss.str();
+	              idxCuad++;
+              } else {
+              	  float ref = constantes.top(); constantes.pop();
+              	  cout << "GOTOV" << " " << ref << " " << dir << endl;
+	              cuadruplos[idxCuad][0] = "GOTOV";
+	              ss.str(std::string());
+	              ss << ref;
+	              cuadruplos[idxCuad][1] = ss.str();
+	              ss.str(std::string());
+	              ss << dir;
+	              cuadruplos[idxCuad][2] = ss.str();
+	              cuadruplos[idxCuad][3] = "num";
+	              idxCuad++;
 
+              }
             }
             ;
 
@@ -373,21 +436,84 @@ E:			  ES
                     int op2 = operandos.top();      operandos.pop();
                     int op1 = operandos.top();      operandos.pop();
                     int res = temporales.top();     temporales.pop();
-                    // Generar cuadruplo
-                    cout << "CUADRUPLO:\t";
-                    cout << opn << " " << op1 << " " << op2 << " " << res << endl;
-                    cuadruplos[idxCuad][0] = opn;
-                    ss.str(std::string());
-                    ss << op1;
-                    cuadruplos[idxCuad][1] = ss.str();
-                    ss.str(std::string());
-                    ss << op2;
-                    cuadruplos[idxCuad][2] = ss.str();
-                    ss.str(std::string());
-                    ss << res;
-                    cuadruplos[idxCuad][3] = ss.str();
-                    idxCuad++;
-                    operandos.push(res);
+
+                    if(op1 != -1 && op2 != -1){
+                    	// Generar cuadruplo
+	                    cout << "CUADRUPLO:\t";
+	                    cout << opn << " " << op1 << " " << op2 << " " << res << endl;
+	                    cuadruplos[idxCuad][0] = opn;
+	                    ss.str(std::string());
+	                    ss << op1;
+	                    cuadruplos[idxCuad][1] = ss.str();
+	                    ss.str(std::string());
+	                    ss << op2;
+	                    cuadruplos[idxCuad][3] = ss.str();
+	                    ss.str(std::string());
+	                    ss << res;
+	                    cuadruplos[idxCuad][5] = ss.str();
+	                    idxCuad++;
+	                    operandos.push(res);
+                    } else if(op1 != -1 && op2 == -1) {
+                    	// Generar cuadruplo
+                    	float op2f = constantes.top(); constantes.pop();
+	                    cout << "CUADRUPLO:\t";
+	                    cout << opn << " " << op1 << " " << op2f << " num " << res << endl;
+	                    cuadruplos[idxCuad][0] = opn;
+	                    ss.str(std::string());
+	                    ss << op1;
+	                    cuadruplos[idxCuad][1] = ss.str();
+	                    ss.str(std::string());
+	                    ss << op2f;
+	                    cuadruplos[idxCuad][3] = ss.str();
+	                    cuadruplos[idxCuad][4] = "num";
+	                    ss.str(std::string());
+	                    ss << res;
+	                    cuadruplos[idxCuad][5] = ss.str();
+	                    idxCuad++;
+	                    operandos.push(res);
+
+                    } else if(op1 == -1 && op2 != -1) {
+                    	// Generar cuadruplo
+                    	float op1f = constantes.top(); constantes.pop();
+	                    cout << "CUADRUPLO:\t";
+	                    cout << opn << " " << op1f << " " << op2 << " " << res << endl;
+	                    cuadruplos[idxCuad][0] = opn;
+	                    ss.str(std::string());
+	                    ss << op1f;
+	                    cuadruplos[idxCuad][1] = ss.str();
+	                    cuadruplos[idxCuad][2] = "num";
+	                    ss.str(std::string());
+	                    ss << op2;
+	                    cuadruplos[idxCuad][3] = ss.str();
+	                    ss.str(std::string());
+	                    ss << res;
+	                    cuadruplos[idxCuad][5] = ss.str();
+	                    idxCuad++;
+	                    operandos.push(res);
+
+                    } else if(op1 == -1 && op2 == -1) {
+                    	// Generar cuadruplo
+                    	float op2f = constantes.top(); constantes.pop();
+                    	float op1f = constantes.top(); constantes.pop();
+	                    cout << "CUADRUPLO:\t";
+	                    cout << opn << " " << op1f << " " << op2f << " " << res << endl;
+	                    cuadruplos[idxCuad][0] = opn;
+	                    ss.str(std::string());
+	                    ss << op1f;
+	                    cuadruplos[idxCuad][1] = ss.str();
+	                    cuadruplos[idxCuad][2] = "num";
+	                    ss.str(std::string());
+	                    ss << op2f;
+	                    cuadruplos[idxCuad][3] = ss.str();
+	                    cuadruplos[idxCuad][4] = "num";
+	                    ss.str(std::string());
+	                    ss << res;
+	                    cuadruplos[idxCuad][5] = ss.str();
+	                    idxCuad++;
+	                    operandos.push(res);
+
+                    }
+                    
               }
             ;
 
@@ -401,25 +527,99 @@ PRIO1:		    LT    {operadores.push("<");}
 
 ES: 		  TA
             | ES PRIO2 TA {
-            		    string opn = operadores.top();  operadores.pop();
+            		string opn = operadores.top();  operadores.pop();
                   	int op2 = operandos.top();      operandos.pop();
                   	int op1 = operandos.top();      operandos.pop();
                   	int res = temporales.top();     temporales.pop();
+
+
                   	// Generar cuadruplo
                   	cout << "CUADRUPLO:\t";
-                  	cout << opn << " " << op1 << " " << op2 << " " << res << endl;
-                    cuadruplos[idxCuad][0] = opn;
-                    ss.str(std::string());
-                    ss << op1;
-                    cuadruplos[idxCuad][1] = ss.str();
-                    ss.str(std::string());
-                    ss << op2;
-                    cuadruplos[idxCuad][2] = ss.str();
-                    ss.str(std::string());
-                    ss << res;
-                    cuadruplos[idxCuad][3] = ss.str();
-                    idxCuad++;
-                  	operandos.push(res);
+              
+                  	if(op1 != -1 && op2 != -1){
+                    	// Generar cuadruplo
+	                    cout << "CUADRUPLO:\t";
+	                    cout << opn << " " << op1 << " " << op2 << " " << res << endl;
+	                    cuadruplos[idxCuad][0] = opn;
+	                    ss.str(std::string());
+	                    ss << op1;
+	                    cuadruplos[idxCuad][1] = ss.str();
+	                    ss.str(std::string());
+	                    ss << op2;
+	                    cuadruplos[idxCuad][3] = ss.str();
+	                    ss.str(std::string());
+	                    ss << res;
+	                    cuadruplos[idxCuad][5] = ss.str();
+	                    idxCuad++;
+	                    operandos.push(res);
+                    } else if(op1 != -1 && op2 == -1) {
+                    	// Generar cuadruplo
+                    	float op2f = constantes.top(); constantes.pop();
+	                    cout << "CUADRUPLO:\t";
+	                    cout << opn << " " << op1 << " " << op2f << " num " << res << endl;
+	                    cuadruplos[idxCuad][0] = opn;
+	                    ss.str(std::string());
+	                    ss << op1;
+	                    cuadruplos[idxCuad][1] = ss.str();
+	                    ss.str(std::string());
+	                    ss << op2f;
+	                    cuadruplos[idxCuad][3] = ss.str();
+	                    cuadruplos[idxCuad][4] = "num";
+	                    ss.str(std::string());
+	                    ss << res;
+	                    cuadruplos[idxCuad][5] = ss.str();
+	                    idxCuad++;
+	                    operandos.push(res);
+
+                    } else if(op1 == -1 && op2 != -1) {
+                    	// Generar cuadruplo
+                    	float op1f = constantes.top(); constantes.pop();
+	                    cout << "CUADRUPLO:\t";
+	                    cout << opn << " " << op1f << " " << op2 << " " << res << endl;
+	                    cuadruplos[idxCuad][0] = opn;
+	                    ss.str(std::string());
+	                    ss << op1f;
+	                    cuadruplos[idxCuad][1] = ss.str();
+	                    cuadruplos[idxCuad][2] = "num";
+	                    ss.str(std::string());
+	                    ss << op2;
+	                    cuadruplos[idxCuad][3] = ss.str();
+	                    ss.str(std::string());
+	                    ss << res;
+	                    cuadruplos[idxCuad][5] = ss.str();
+	                    idxCuad++;
+	                    operandos.push(res);
+
+                    } else if(op1 == -1 && op2 == -1) {
+                    	// Generar cuadruplo
+                    	float op2f = constantes.top(); constantes.pop();
+                    	float op1f = constantes.top(); constantes.pop();
+	                    cout << "CUADRUPLO:\t";
+	                    cout << opn << " " << op1f << " " << op2f << " " << res << endl;
+	                    cuadruplos[idxCuad][0] = opn;
+	                    ss.str(std::string());
+	                    ss << op1f;
+	                    cuadruplos[idxCuad][1] = ss.str();
+	                    cuadruplos[idxCuad][2] = "num";
+	                    ss.str(std::string());
+	                    ss << op2f;
+	                    cuadruplos[idxCuad][3] = ss.str();
+	                    cuadruplos[idxCuad][4] = "num";
+	                    ss.str(std::string());
+	                    ss << res;
+	                    cuadruplos[idxCuad][5] = ss.str();
+	                    idxCuad++;
+	                    operandos.push(res);
+
+                    }
+
+
+
+
+
+
+
+
               } 
 
             ;
@@ -435,21 +635,86 @@ TA: 		  FF
                   int op2 = operandos.top();      operandos.pop();
                   int op1 = operandos.top();      operandos.pop();
                   int res = temporales.top();     temporales.pop();
+                  
                   // Generar cuadruplo
-                  cout <<"CUADRUPLO:\t";
-                  cout << opn << " " << op1 << " " << op2 << " " << res << endl;
-                  cuadruplos[idxCuad][0] = opn;
-                  ss.str(std::string());
-                  ss << op1;
-                  cuadruplos[idxCuad][1] = ss.str();
-                  ss.str(std::string());
-                  ss << op2;
-                  cuadruplos[idxCuad][2] = ss.str();
-                  ss.str(std::string());
-                  ss << res;
-                  cuadruplos[idxCuad][3] = ss.str();
-                  idxCuad++;
-                  operandos.push(res); 
+                  	cout << "CUADRUPLO:\t";
+              
+                  	if(op1 != -1 && op2 != -1){
+                    	// Generar cuadruplo
+	                    cout << "CUADRUPLO:\t";
+	                    cout << opn << " " << op1 << " " << op2 << " " << res << endl;
+	                    cuadruplos[idxCuad][0] = opn;
+	                    ss.str(std::string());
+	                    ss << op1;
+	                    cuadruplos[idxCuad][1] = ss.str();
+	                    ss.str(std::string());
+	                    ss << op2;
+	                    cuadruplos[idxCuad][3] = ss.str();
+	                    ss.str(std::string());
+	                    ss << res;
+	                    cuadruplos[idxCuad][5] = ss.str();
+	                    idxCuad++;
+	                    operandos.push(res);
+                    } else if(op1 != -1 && op2 == -1) {
+                    	// Generar cuadruplo
+                    	float op2f = constantes.top(); constantes.pop();
+	                    cout << "CUADRUPLO:\t";
+	                    cout << opn << " " << op1 << " " << op2f << " num " << res << endl;
+	                    cuadruplos[idxCuad][0] = opn;
+	                    ss.str(std::string());
+	                    ss << op1;
+	                    cuadruplos[idxCuad][1] = ss.str();
+	                    ss.str(std::string());
+	                    ss << op2f;
+	                    cuadruplos[idxCuad][3] = ss.str();
+	                    cuadruplos[idxCuad][4] = "num";
+	                    ss.str(std::string());
+	                    ss << res;
+	                    cuadruplos[idxCuad][5] = ss.str();
+	                    idxCuad++;
+	                    operandos.push(res);
+
+                    } else if(op1 == -1 && op2 != -1) {
+                    	// Generar cuadruplo
+                    	float op1f = constantes.top(); constantes.pop();
+	                    cout << "CUADRUPLO:\t";
+	                    cout << opn << " " << op1f << " " << op2 << " " << res << endl;
+	                    cuadruplos[idxCuad][0] = opn;
+	                    ss.str(std::string());
+	                    ss << op1f;
+	                    cuadruplos[idxCuad][1] = ss.str();
+	                    cuadruplos[idxCuad][2] = "num";
+	                    ss.str(std::string());
+	                    ss << op2;
+	                    cuadruplos[idxCuad][3] = ss.str();
+	                    ss.str(std::string());
+	                    ss << res;
+	                    cuadruplos[idxCuad][5] = ss.str();
+	                    idxCuad++;
+	                    operandos.push(res);
+
+                    } else if(op1 == -1 && op2 == -1) {
+                    	// Generar cuadruplo
+                    	float op2f = constantes.top(); constantes.pop();
+                    	float op1f = constantes.top(); constantes.pop();
+	                    cout << "CUADRUPLO:\t";
+	                    cout << opn << " " << op1f << " " << op2f << " " << res << endl;
+	                    cuadruplos[idxCuad][0] = opn;
+	                    ss.str(std::string());
+	                    ss << op1f;
+	                    cuadruplos[idxCuad][1] = ss.str();
+	                    cuadruplos[idxCuad][2] = "num";
+	                    ss.str(std::string());
+	                    ss << op2f;
+	                    cuadruplos[idxCuad][3] = ss.str();
+	                    cuadruplos[idxCuad][4] = "num";
+	                    ss.str(std::string());
+	                    ss << res;
+	                    cuadruplos[idxCuad][5] = ss.str();
+	                    idxCuad++;
+	                    operandos.push(res);
+
+                    }
              } 
             ;
 
@@ -459,14 +724,20 @@ PRIO3: 	  	  MULT    {operadores.push("*");}
             ;
 
 
-FF:			      INTEGER {
-                ;
+FF:			  INTEGER {
+				float aux = ($1)/1.0;
+				cout << "FF INT:"<<aux<<endl;
+				operandos.push(-1);
+				constantes.push(aux);
               }
             | FLOATINGPOINT {
-                ;
+				float aux = $1;
+				operandos.push(-1);
+				constantes.push(aux);                
               }
             | X1 OPAR E CPAR
             | X1 ID { 
+            		  cout << "FF ID:"<<$2<<endl;
                       int pos = getIndex( $2 ); 
                       if(pos != -1){ 
                         operandos.push(pos);

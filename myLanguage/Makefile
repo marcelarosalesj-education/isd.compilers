@@ -8,7 +8,7 @@ all: myLanguage
 myLanguage: mylanguage.l mylanguage.y
 	flex mylanguage.l
 	bison -d mylanguage.y
-	g++ lex.yy.c mylanguage.tab.c mylanguage.tab.h -o myLang
+	g++ lex.yy.c mylanguage.tab.c mylanguage.tab.h -g -o myLang
 
 
 clean:

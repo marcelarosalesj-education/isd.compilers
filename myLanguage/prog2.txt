@@ -1,19 +1,12 @@
-def hola {
-  num a1;
-  lett a2;
-}
-
-def test {
-    num t;
-}
-
 main {
-  lett d = "e";
-  num a;
-  for(a=1; e; e){
-    lett x="e";
-    if(e){
-      lett a="e";
-    };
-  };
+  num a = 7;
+  num b = 8.7;
+  num c;
+  num d;
+  num e;
+  num f;
+  num g;
+  num suma;
+  suma = 91+b*c+6.54*(d*e+f*g);
+  g = 9 + 1;
 }
