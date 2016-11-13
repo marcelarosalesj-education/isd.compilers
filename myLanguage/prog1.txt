@@ -1,31 +1,8 @@
-def f1{
-	num a;
-	if(a<5){
-		num a1=1;	
-	};
-}
-
-def f2{
-	lett letra1;
-	lett letra2;
-}
-
 main {
-	num a;
-	lett b;
-	num c=1;
-	lett d="hi";
 	num i;
-	if(4<5){
-		for(i=0; i<5; i+1){
-			lett a="bye";
-		};	
-	};
-	
-	while(1 and c){
-		do{
-			num f;			
-			lett h="eeee";
-		}while(f);
-	};
+	num a;
+
+	for(i=0; i<5){
+		a=a*i;
+	}(i+1);
 }

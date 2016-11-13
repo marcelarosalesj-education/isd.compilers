@@ -1,15 +1,14 @@
 main {
 	num a = 7;
-	num b = 8.7;
+	num b = 8;
 	num c;
 	num d;
 	num e;
 	num f;
 	num g;
-	num suma;
-	suma = a+b*c+a*(d*e+f*g);
+	num suma ;
 	lett h;
-	lett i = "hola";
+	num iiii;
 
 	if( (5 > a) and (1<b) ) {
 		a=1;
@@ -18,13 +17,23 @@ main {
 		c=a+b;
 	};
 
-	while(a>b){
-		a=c;
-		c=e;
+	while(a<10){
+		num j=1;
 	};
 
+
+
 	do{
-		f=g;
-		d=c;
-	} while(f<5);
+		a=b+c;
+
+	}while(a<g);
+
+	lett m = "marcela";
+	for(iiii=13; iiii<5){
+		c=c+56;
+		if(c==d){
+			num j;
+		};
+	}(iiii=iiii-1);
+
 }

@@ -1,0 +1,11 @@
+main {
+	num a =4;
+	num b =9.8;
+	num c ;
+	num i ;
+	b=a+56*c;
+
+	for(i=0; i<5){
+		a=a+13*b;
+	}(i=i+1);
+}

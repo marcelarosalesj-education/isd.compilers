@@ -31,8 +31,7 @@ ID              [a-z][a-z0-9]*
 "for"                     { return FOR;}
 "do"                      { return DO;}
 "while"                   { return WHILE;}
-"("                       { return OPAR;
-                          }
+"("                       { return OPAR;}
 ")"                       { return CPAR;}
 "["                       { return OB;}
 "]"                       { return CB;}
@@ -66,7 +65,7 @@ ID              [a-z][a-z0-9]*
                            return FLOATINGPOINT;
                           }
 {ID}                      {
-                           //printf( "got ID: %s\n", yytext );
+                           printf( "got ID: %s\n", yytext );
                            yylval.string = yytext;
                            return ID;
                           }
