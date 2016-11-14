@@ -65,7 +65,7 @@ ID              [a-z][a-z0-9]*
                            return FLOATINGPOINT;
                           }
 {ID}                      {
-                           printf( "got ID: %s\n", yytext );
+                           //printf( "got ID: %s\n", yytext );
                            yylval.string = yytext;
                            return ID;
                           }

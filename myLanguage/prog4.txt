@@ -1,11 +1,19 @@
-main {
-	num a =4;
-	num b =9.8;
-	num c ;
-	num i ;
-	b=a+56*c;
 
-	for(i=0; i<5){
-		a=a+13*b;
-	}(i=i+1);
+def func1{
+	num a=0;
+	a=a+1;
+}
+
+main {
+	num b;
+	num i;
+	b=a+56*a;
+
+	if(b==1){
+		for(i=0; i<5){
+			a=a+13*b;
+		}(i=i+1);
+	};
+	
+
 }

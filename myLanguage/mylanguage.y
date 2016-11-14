@@ -179,7 +179,6 @@ STMT:
             | DW     		{;}
             | DECL
             | ID {
-            cout << "b?";
                   string aux = $1;
                   if( std::string::npos != aux.find("=") ){ // It has an =
                     aux = trim(aux.substr(0, aux.find("=")));
@@ -196,7 +195,6 @@ STMT:
                   cuadruplos[idxCuad][2] = id;
                   
                   idxCuad++;  
-                  cout << "by2"<<endl;                
               }
 
             | ID OPAR CPAR
@@ -204,7 +202,6 @@ STMT:
 
 DECL:		  NUM ID {
                 string aux = $2;
-                cout << "NUMID:"<<aux<<endl;
                 table[idx].varname = aux;
                 table[idx].vartype = "num";
                 ss.str(std::string());
@@ -243,17 +240,16 @@ X:            EQUAL INTEGER  {
                   cuadruplos[idxCuad][2] = id;
                   idxCuad++;
               } 
-            |
+            | {
+                // Sacamos lo que hay aqui porque no hay nada en X, para evitar que esta referencia se quede en el stack
+                operandos.pop();
+              }
             ;
 
 Y:           EQUAL STRING {
-                  cout << "ASIGN"<<endl;
                   string aux = $1;
-                  cout << "  aux :"<<aux<<endl;
                   string re = trim(aux.substr(aux.find("=")+1, aux.size() ) );
-                  cout << "re:"<<re<<endl;
                   string id = operandos.top();      operandos.pop();
-                  cout << "id:"<<id<<endl;
                   cuadruplos[idxCuad][0] = "=";
                   cuadruplos[idxCuad][1] = re;
                   cuadruplos[idxCuad][3] = id;
@@ -302,7 +298,6 @@ ASSIGN:     ID {
               string aux = $3;
               string re = trim(aux.substr(aux.find("=")+1, aux.size() ) );
               string id = operandos.top(); operandos.pop();
-              cout << "HOLA:"<<re<<" , "<<id<<endl;
               cuadruplos[idxCuad][0] = "=";
               ss.str(string());
               ss << re + " num";
@@ -316,7 +311,6 @@ ASSIGN:     ID {
 
 F:          FOR OPAR ASSIGN SEMICOLON E CPAR {
               string re = operandos.top(); operandos.pop();
-              cout << "RE ES:"<<re<<endl;
 
               // Cuadruplo
               cuadruplos[idxCuad][0] = "GOTOF";
@@ -405,15 +399,12 @@ DW:         DO {
             }
             ;
 
-E:			  ES{ cout << "holi"<<endl;}
+E:			  ES {;}
             | ES PRIO1 ES {
-              cout << "LA E"<<endl;
               string opn = operadores.top();  operadores.pop();
               string op2 = operandos.top();      operandos.pop();
               string op1 = operandos.top();      operandos.pop();
               string res = temporales.top();     temporales.pop();
-
-              cout << "Cuadruplo:"<<opn<<" "<<op1 << " "<<op2 <<" "<<res<<endl;
 
               cuadruplos[idxCuad][0] = opn;
               cuadruplos[idxCuad][1] = op1;
@@ -436,28 +427,17 @@ PRIO1:		    LT    {operadores.push("<");}
 ES: 		  TA
             | ES PRIO2 TA {
                 string opn = operadores.top();  operadores.pop();
-                cout <<"opn"<<opn<<endl;
                 string op2 = operandos.top();      operandos.pop();
-                cout <<"op2"<<op2<<endl;
                 string op1 = operandos.top();      operandos.pop();
-                                cout <<"op1"<<op1<<endl;
 
                 string res = temporales.top();     temporales.pop();
-                                cout <<"res"<<res<<endl;
-
-                cout << "AAA:"<<idxCuad<<endl;
 
                 cuadruplos[idxCuad][0] = opn;
-                cout <<"a";
                 cuadruplos[idxCuad][1] = op1;
-                cout <<"b";
                 cuadruplos[idxCuad][2] = op2;
-                cout <<"c";
                 cuadruplos[idxCuad][3] = res;
-                cout << "d";
                 idxCuad++;
                 operandos.push(res);
-                cout << "AAA:"<<idxCuad<<endl;
               }
 
             ;
@@ -494,8 +474,6 @@ FF:			  INTEGER {
                 ss.str(std::string());
                 ss << aux << " num " ;
                 operandos.push(ss.str());
-              cout <<"INTEGER:"<<ss.str()<<endl;
-                cout<<"sale de int"<<endl;
         }
             | FLOATINGPOINT {
         				float aux = ($1)/1.0;
