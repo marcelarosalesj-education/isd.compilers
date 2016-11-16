@@ -39,7 +39,15 @@ struct node{
 struct Element table[100];
 int idx=0;
 
+int f=0;
+int L=0;
 
+node *curr = new node;
+
+
+int MEMORIA[100];
+int idxMem = 0;
+int baseMem = 0;
 
 std::stringstream ss;
 
@@ -104,6 +112,14 @@ stack<string> printstackString(stack<string> q){
 	return ret2;
 }
 
+void displayLL(struct node *d){
+	//cout << (d)<<":("<<(*d).d << ","<<(*d).m<<")->"<<(*d).next<<endl;;
+	while( d != NULL ){
+		cout << (d)<<":("<<(*d).d << ","<<(*d).m<<")->"<<(*d).next<<endl;
+		d=(*d).next;
+	}
+
+}
 
 
 %}
@@ -129,7 +145,7 @@ ROOT:       FUNCTS M {
 				cout << "TABLA DE SIMBOLOS"<<endl;
     			cout << "Num of variables: "<<idx<<endl;
 				for(impr=0; impr<idx; impr++){
-					cout << impr<<"|"<< table[impr].varname << "|"<< table[impr].vartype << endl;
+					cout << impr<<"|"<< table[impr].varname << "|"<< table[impr].vartype <<"|"<< table[impr].dim << endl;
 
 				}
 
@@ -144,7 +160,7 @@ ROOT:       FUNCTS M {
 	            }
       // Vacias Pilas, operandos, operadores, temporales, saltos
 
-      cout << "LAS PILAS QUEDARON :"<<endl;
+      /*cout << "LAS PILAS QUEDARON :"<<endl;
       cout << "operandos"<<endl;
       printstackString(operandos);
       cout <<endl;
@@ -156,7 +172,7 @@ ROOT:       FUNCTS M {
       cout <<endl;
       cout << "saltos"<<endl;
       printstackInt(saltos);
-      cout <<endl;
+      cout <<endl;*/
 
 
 			}
@@ -212,20 +228,70 @@ DECL:		  NUM ID {
                 string aux = $2;
                 table[idx].varname = aux;
                 table[idx].vartype = "num";
+                table[idx].dim     = NULL;
+                f=0;
+                L=1;
+                baseMem++;
+
                 ss.str(std::string());
                 ss << idx;
                 operandos.push(ss.str());
                 idx=idx+1;
-        } X 
+        } X3 {
+
+				if(f==1){
+					curr = table[idx-1].dim;
+					curr->m = baseMem-1;
+					baseMem = (baseMem-1)+curr->d;
+					cout << "NEXT BASEMEM:"<<baseMem<<endl;
+
+				} else if(f>1) {
+					cout << "BM:"<<baseMem<<endl;
+					curr = table[idx-1].dim;
+
+					int indice=1;
+
+					(*curr).m = L/(*curr).d;
+
+					while( curr->next != NULL){
+
+						int mi = (*curr).m; // mi-1, because we haven't moved. Just checked that there's something next 
+
+						curr = curr->next; // OK, move
+
+						(*curr).m = mi / (*curr).d; // in i position, do mi = mi-1 / di
+
+						indice++;
+
+					}
+
+					(*curr).m =  (baseMem-1); // Last current, so, this. Is the last node because its next is null
+					baseMem = (baseMem -1) + L;
+
+				}
+
+
+				cout << " DIMENSIONES :"<< f << endl;
+				cout << " L:"<< L << endl;
+				cout << " --- LISTA:"<<endl;
+				displayLL( table[idx-1].dim );	
+				cout <<endl<<endl;
+
+				} X 
 			| LETT ID {
                 string aux = $2;
                 table[idx].varname = aux;
                 table[idx].vartype = "lett";
+                table[idx].dim     = NULL;
+                f=0;
+                L=1;
+                baseMem++;
+
                 ss.str(std::string());
                 ss << idx;
                 operandos.push(ss.str());
                 idx=idx+1;
-        } Y
+        } X3 Y
 			;
 
 X:            EQUAL INTEGER  {
@@ -501,7 +567,45 @@ FF:			  INTEGER {
                     } X3 ;
 
 X1:			     NOT | ;
-X3: 		     OB E CB X3 | ;
+X3: 		     OB {
+	
+					if(f==0){
+						
+						node *n = new node();
+						n->d=0;
+						n->m=0;
+						n->next=NULL;
+
+						table[idx-1].dim = n;
+						curr = n;
+
+						f++;
+
+					} else {
+						
+						node *n = new node();
+						n->d=0;
+						n->m=0;
+						n->next=NULL;
+
+						curr->next = n;
+						curr = curr->next;
+
+						f++;
+
+					}
+
+				} E {
+					string re = operandos.top(); operandos.pop();
+					int aux;
+					istringstream convert(re);
+					if(!(convert >> aux)) aux=-1;
+					L = L*aux;
+
+					(*curr).d = aux;
+
+
+				} CB X3 | ;
 
 
 %%
