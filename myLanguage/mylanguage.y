@@ -20,7 +20,7 @@ stack<string> operadores;
 stack<string> operandos;
 stack<string> temporales;
 stack<int> saltos;
-int idxCuad = 0;
+stack<string> tipos;
 
 string cuadruplos[100][4];
 
@@ -29,9 +29,28 @@ struct Element{
 	string vartype;
 };
 
-struct Element table[100];
-int idx=0;
+struct VarDimensionada{
+	string id;
+	string tipo;
+	struct nodo *next;
+};
 
+struct nodo{
+	int d;
+	int m;
+	struct nodo *next;	
+};
+
+struct Element table[100]; // tabla de variables simples
+
+struct VarDimensionada tablaDimensionada[100];
+int f; // para vars dimensionadas 
+int L; // para vars
+
+
+int idx = 0; // index de tabla simple
+int idxDim = 0; // index de tabla dimensionada
+int idxCuad = 0; // index de cuadruplos
 
 
 std::stringstream ss;
@@ -208,8 +227,14 @@ DECL:		  NUM ID {
                 ss.str(std::string());
                 ss << idx;
                 operandos.push(ss.str());
+                tipos.push("num");
                 idx=idx+1;
-        } X 
+
+                f=0;
+                L=1;
+
+                
+        } X3 X 
 			| LETT ID {
                 string aux = $2;
                 table[idx].varname = aux;
@@ -217,9 +242,17 @@ DECL:		  NUM ID {
                 ss.str(std::string());
                 ss << idx;
                 operandos.push(ss.str());
+                tipos.push("lett");
                 idx=idx+1;
-        } Y
+
+                f=0;
+                L=1;
+        } X3 Y
 			;
+
+
+
+
 
 X:            EQUAL INTEGER  {
                   string aux = $1;
@@ -256,7 +289,11 @@ Y:           EQUAL STRING {
                   cuadruplos[idxCuad][3] = id;
                   idxCuad++;
               } 
-            |
+            | {
+                // Sacamos lo que hay aqui porque no hay nada en Y, para evitar que esta referencia se quede en el stack
+                operandos.pop();
+              }
+
             ;
 
 I:          IF OPAR E CPAR {
@@ -477,7 +514,7 @@ FF:			  INTEGER {
                 operandos.push(ss.str());
         }
             | FLOATINGPOINT {
-        				float aux = ($1)/1.0;
+        		float aux = ($1)/1.0;
                 ss.str(std::string());
                 ss << aux << " num " ;
                 operandos.push(ss.str());  
@@ -494,7 +531,28 @@ FF:			  INTEGER {
                     } X3 ;
 
 X1:			     NOT | ;
-X3: 		     OB E CB X3 | ;
+X3: 		     OB {
+					
+					// agregar a tabla dimensionada sin eliminar del stack porque se necesitan para la asinacion en caso de que haya
+					tablaDimensionada[idxDim].id = operandos.top();
+					tablaDimensionada[idxDim].tipo = tipos.top();
+
+					// Limpiar variable simple que se agrego porque en realidad es dimensionada
+					table[idx-1].varname="";
+					table[idx-1].vartype="";
+					idx--;
+
+					nodo *sig;
+					sig = new nodo; 
+					if(f==0){
+						tablaDimensionada[idxDim].next = sig; 
+					}
+
+				} E {
+					 tablaDimensionada[idxDim].next->d = atoi( operandos.top() ) * L;
+					 operandos.pop();
+
+				} CB X3 | ;
 
 
 %%
