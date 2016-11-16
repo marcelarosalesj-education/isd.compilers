@@ -291,7 +291,7 @@ DECL:		  NUM ID {
                 ss << idx;
                 operandos.push(ss.str());
                 idx=idx+1;
-        } X3 Y
+        } Y
 			;
 
 X:            EQUAL INTEGER  {
