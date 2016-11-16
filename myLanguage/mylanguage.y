@@ -27,6 +27,13 @@ string cuadruplos[100][4];
 struct Element{
 	string varname;
 	string vartype;
+	struct node *dim;
+};
+
+struct node{
+	int d;
+	int m;
+	struct node *next;
 };
 
 struct Element table[100];
