@@ -1,0 +1,4 @@
+flex hola.l 
+bison -d hola.y 
+gcc -o exe lex.yy.c hola.tab.h hola.tab.c 
+./exe < input.txt 
