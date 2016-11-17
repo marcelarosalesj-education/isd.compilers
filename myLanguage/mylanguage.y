@@ -41,12 +41,14 @@ int idx=0;
 
 int f=0;
 int L=0;
+int dimPos=0;
 
 node *curr = new node;
 
 
 int MEMORIA[100];
 int idxMem = 0;
+
 int baseMem = 0;
 
 std::stringstream ss;
@@ -208,9 +210,24 @@ STMT:
                     aux = trim(aux.substr(0, aux.find("=")));
                   } else if ( std::string::npos != aux.find(";") ){ // It has an ;
                     aux = trim(aux.substr(0, aux.find(";")));
+                  } else if ( std::string::npos != aux.find("[") ){ // It has a [ 
+                  	aux = trim(aux.substr(0, aux.find("[")));
                   }
                   operandos.push(getIndex(aux));
-              } X3 EQUAL E {
+
+                  dimPos=0; // Whenever it finds a new ID, its dimension starts in 0
+
+              } X33 {
+
+              	string re = operandos.top(); operandos.pop();
+              	re = "["+re+"]";
+              	operandos.push(re);
+
+
+
+
+
+              }EQUAL E {
                   string re = operandos.top();      operandos.pop();
                   string id = operandos.top();      operandos.pop();
                   
@@ -223,6 +240,8 @@ STMT:
 
             | ID OPAR CPAR
             ;
+
+
 
 DECL:		  NUM ID {
                 string aux = $2;
@@ -243,10 +262,8 @@ DECL:		  NUM ID {
 					curr = table[idx-1].dim;
 					curr->m = baseMem-1;
 					baseMem = (baseMem-1)+curr->d;
-					cout << "NEXT BASEMEM:"<<baseMem<<endl;
 
 				} else if(f>1) {
-					cout << "BM:"<<baseMem<<endl;
 					curr = table[idx-1].dim;
 
 					int indice=1;
@@ -271,11 +288,11 @@ DECL:		  NUM ID {
 				}
 
 
-				cout << " DIMENSIONES :"<< f << endl;
+				/*cout << " DIMENSIONES :"<< f << endl;
 				cout << " L:"<< L << endl;
 				cout << " --- LISTA:"<<endl;
 				displayLL( table[idx-1].dim );	
-				cout <<endl<<endl;
+				cout <<endl<<endl;*/
 
 				} X 
 			| LETT ID {
@@ -606,6 +623,117 @@ X3: 		     OB {
 
 
 				} CB X3 | ;
+
+X33:		{
+				// First positon
+				dimPos++;
+
+
+				if(dimPos == 1){
+					string id = operandos.top(); operandos.pop();
+
+					int aux;
+					istringstream convert(id);
+					if(!(convert >> aux)) aux=-1;
+
+					curr = table[aux].dim;
+					/*cout << "-------------------"<<endl;
+					cout << "LET'S PRINT THE LL OF THIS VAR"<<endl;
+					displayLL(curr);
+					cout << "-------------------"<<endl;*/
+				}
+
+
+			} OB E {
+				// existe una siguiente dimension
+				if( curr->next ) {
+					string re = operandos.top(); operandos.pop();
+					string res = temporales.top(); temporales.pop();
+					// GENERAR CUADRUPLO
+					cuadruplos[idxCuad][0] = "*";
+                  	cuadruplos[idxCuad][1] = re ;
+                  	ss.str(std::string());
+               		ss << (*curr).m;
+                  	cuadruplos[idxCuad][2] = ss.str() ;
+                  	cuadruplos[idxCuad][3] = res;
+					idxCuad++; 
+
+					// string to int
+					int aux;
+					istringstream convert(re);
+					if(!(convert >> aux)) aux=-1;
+
+   					int auxx = (aux*(*curr).m) ;
+   					// int to string
+					ss.str(string());
+   					ss << auxx;
+    				operandos.push( ss.str() );
+
+    				//curr = curr->next;
+
+				}
+
+				// ya hay dos o mas dimensiones
+				if(dimPos >= 2){
+					string op1 = operandos.top(); operandos.pop();
+					string op2 = operandos.top(); operandos.pop();
+					string res = temporales.top(); temporales.pop();
+
+					// GENERAR CUADRUPLO
+					cuadruplos[idxCuad][0] = "+";
+                  	cuadruplos[idxCuad][1] = op1 ;
+                  	cuadruplos[idxCuad][2] = op2 ;
+                  	cuadruplos[idxCuad][3] = res;
+					idxCuad++; 					
+
+					// string to int
+					int aux1;
+					istringstream convert(op1);
+					if(!(convert >> aux1)) aux1=-1;
+
+					// string to int
+					int aux2;
+					istringstream convert2(op2);
+					if(!(convert2 >> aux2)) aux2=-1;
+
+   					int auxr = aux1+aux2;
+   					// int to string
+					ss.str(string());
+   					ss << auxr;
+    				operandos.push( ss.str() );
+				}
+
+				// ultima dimension
+				if(curr->next == NULL){
+					string re = operandos.top(); operandos.pop();
+					string res = temporales.top(); temporales.pop();
+					// GENERAR CUADRUPLO
+					cuadruplos[idxCuad][0] = "+";
+                  	cuadruplos[idxCuad][1] = re ;
+                  	ss.str(std::string());
+               		ss << (*curr).m;
+                  	cuadruplos[idxCuad][2] = ss.str() ;
+                  	cuadruplos[idxCuad][3] = res;
+					idxCuad++; 
+
+					int aux;
+					istringstream convert(re);
+					if(!(convert >> aux)) aux=-1;
+   					int auxx= (aux+(*curr).m) ;
+					ss.str(string());
+   					ss << auxx;
+    				operandos.push( ss.str() );
+
+    				
+					//curr = curr->next;
+
+				}
+
+
+				curr = curr->next;
+
+
+			} CB X33 | ;
 
 
 %%
