@@ -136,8 +136,6 @@ void displayLL(struct node *d){
 	}
 }
 
-
-
 %}
 
 %union {
@@ -150,49 +148,47 @@ void displayLL(struct node *d){
 %token <string> MAIN DEF NUM LETT IF ELSE FOR DO WHILE OPAR CPAR OKEY CKEY SEMICOLON EQUAL QUOTE STRING ID LT GT LET GET EQU NEQ PLUS MINUS MULT DIV AND OR NOT OB CB COMMA 
 %token <integer> INTEGER
 %token <fp> FLOATINGPOINT
-%type <string> ROOT M FUNCTS FUNCT BLOCK X STMT I IE F W DW E PRIO1 ES PRIO2 TA PRIO3 FF X1 X3  DECL XDIM
+%type <string> ROOT M FUNCTS FUNCT BLOCK X STMT I IE F W DW E PRIO1 ES PRIO2 TA PRIO3 FF X1 X3  DECL ASSIGNDIM FORASSIGN
 
 
 %%
 
-ROOT:         FUNCTS M {
-                cout << "    OK ROOT" << endl<<endl;
-				        int impr;
-				        cout << "TABLA DE SIMBOLOS"<<endl;
-                cout << "Num of variables: "<<idx<<endl;
-                for(impr=0; impr<idx; impr++){
-                  cout << impr<<"|"<< table[impr].name << "|"<< table[impr].type <<"|"<< table[impr].dim << endl;
+ROOT:       FUNCTS M {
+              cout << "    OK ROOT" << endl<<endl;
+			        int impr;
+			        cout << "TABLA DE SIMBOLOS"<<endl;
+              cout << "Num of variables: "<<idx<<endl;
+              for(impr=0; impr<idx; impr++){
+                cout << impr<<"|"<< table[impr].name << "|"<< table[impr].type <<"|"<< table[impr].dim << endl;
+              }
+              cout << "CUADRUPLO"<<endl;
+              for(impr=0; impr<idxCuad; impr++){
+                cout << impr << "\t";
+                for(int c=0; c<4; c++){
+                  cout << cuadruplos[impr][c] << " ";
                 }
-                cout << "CUADRUPLO"<<endl;
-                for(impr=0; impr<idxCuad; impr++){
-                  cout << impr << "\t";
-                  for(int c=0; c<4; c++){
-                    cout << cuadruplos[impr][c] << " ";
-                  }
-                  cout << endl;
-                }
-                // Vacias Pilas, operandos, operadores, temporales, saltos
+                cout << endl;
+              }
+              // Vacias Pilas, operandos, operadores, temporales, saltos
 
-                /*cout << "LAS PILAS QUEDARON :"<<endl;
-                cout << "operandos"<<endl;
-                printStackString(operandos);
-                cout <<endl;
-                cout << "operadores"<<endl;
-                printStackString(operadores);
-                cout <<endl;
-                cout << "temporales"<<endl;
-                printStackString(temporales);
-                cout <<endl;
-                cout << "saltos"<<endl;
-                printStackInt(saltos);
-                cout <<endl;*/
-
-
+              /*cout << "LAS PILAS QUEDARON :"<<endl;
+              cout << "operandos"<<endl;
+              printStackString(operandos);
+              cout <<endl;
+              cout << "operadores"<<endl;
+              printStackString(operadores);
+              cout <<endl;
+              cout << "temporales"<<endl;
+              printStackString(temporales);
+              cout <<endl;
+              cout << "saltos"<<endl;
+              printStackInt(saltos);
+              cout <<endl;*/
             }
             ;
 
 FUNCTS:     FUNCT FUNCTS 
-	    	    |
+	    	    | {;}
 	    	    ;
 
 FUNCT:      DEF ID BLOCK
@@ -214,20 +210,24 @@ STMT:     	I
             | W
             | DW
             | DECL
-            | ID {
+            | ASSIGN    {;}
+            |           {;}
+            ;
+
+ASSIGN:     ID {
                 string aux = $1;
-                if( std::string::npos != aux.find("=") ){ // It has an =
+                if( std::string::npos != aux.find("=") ){           // It has an =
                   aux = trim(aux.substr(0, aux.find("=")));
-                } else if ( std::string::npos != aux.find(";") ){ // It has an ;
+                } else if ( std::string::npos != aux.find(";") ){   // It has an ;
                   aux = trim(aux.substr(0, aux.find(";")));
-                } else if ( std::string::npos != aux.find("[") ){ // It has a [ 
+                } else if ( std::string::npos != aux.find("[") ){   // It has a [ 
                 	aux = trim(aux.substr(0, aux.find("[")));
                 }
                 operandos.push(getIndex(aux));
 
                 dimPos=0; // Whenever it finds a new ID, its dimension starts in 0
 
-            } XDIM {
+            } ASSIGNDIM {
                 string re = operandos.top(); operandos.pop();
               	re = "["+re+"]";
               	operandos.push(re);
@@ -355,9 +355,9 @@ IE:         ELSE {
             |                           {;}
             ;
 
-ASSIGN:     ID {
+FORASSIGN:  ID {
               operandos.push( getIndex($1) );
-              } EQUAL INTEGER  { 
+            } EQUAL INTEGER { 
               string aux = $3;
               string re = trim(aux.substr(aux.find("=")+1, aux.size() ) );
               string id = operandos.top(); operandos.pop();
@@ -365,12 +365,10 @@ ASSIGN:     ID {
               cuadruplos[idxCuad][1] = re + " num";
               cuadruplos[idxCuad][2] = id;
               idxCuad++;
-
               saltos.push(idxCuad);
-              
             }         
 
-F:          FOR OPAR ASSIGN SEMICOLON E CPAR {
+F:          FOR OPAR FORASSIGN SEMICOLON E CPAR {
               string re = operandos.top(); operandos.pop();
 
               // Cuadruplo
@@ -449,7 +447,7 @@ DW:         DO {
             }
             ;
 
-E:			  ES {;}
+E:          ES {;}
             | ES PRIO1 ES {
               string opn = operadores.top();  operadores.pop();
               string op2 = operandos.top();      operandos.pop();
@@ -466,7 +464,7 @@ E:			  ES {;}
               }
             ;
 
-PRIO1:		    LT    {operadores.push("<");} 
+PRIO1:		  LT      {operadores.push("<");} 
             | GT    {operadores.push(">");} 
             | LET   {operadores.push("<=");} 
             | GET   {operadores.push(">=");} 
@@ -474,176 +472,162 @@ PRIO1:		    LT    {operadores.push("<");}
             | NEQ   {operadores.push("!=");} 
             ;
 
-ES: 		  TA
+ES: 		    TA
             | ES PRIO2 TA {
-                string opn = operadores.top();  operadores.pop();
-                string op2 = operandos.top();      operandos.pop();
-                string op1 = operandos.top();      operandos.pop();
+              string opn = operadores.top();  operadores.pop();
+              string op2 = operandos.top();      operandos.pop();
+              string op1 = operandos.top();      operandos.pop();
 
-                string res = temporales.top();     temporales.pop();
+              string res = temporales.top();     temporales.pop();
 
-                cuadruplos[idxCuad][0] = opn;
-                cuadruplos[idxCuad][1] = op1;
-                cuadruplos[idxCuad][2] = op2;
-                cuadruplos[idxCuad][3] = res;
-                idxCuad++;
-                operandos.push(res);
-              }
+              cuadruplos[idxCuad][0] = opn;
+              cuadruplos[idxCuad][1] = op1;
+              cuadruplos[idxCuad][2] = op2;
+              cuadruplos[idxCuad][3] = res;
+              idxCuad++;
+              operandos.push(res);
+            }
 
             ;
 
-PRIO2:		    PLUS  {operadores.push("+");} 
+PRIO2:		  PLUS  {operadores.push("+");} 
             | MINUS {operadores.push("-");} 
             | OR    {operadores.push("OR");}
             ;
 
-TA: 		  FF 
-            | TA PRIO3 FF {
-                  string opn = operadores.top();  operadores.pop();
-                  string op2 = operandos.top();      operandos.pop();
-                  string op1 = operandos.top();      operandos.pop();
-                  string res = temporales.top();     temporales.pop();
-              
-                  cuadruplos[idxCuad][0] = opn;
-                  cuadruplos[idxCuad][1] = op1;
-                  cuadruplos[idxCuad][2] = op2;
-                  cuadruplos[idxCuad][3] = res;
-                  idxCuad++;
-                  operandos.push(res);
-             } 
+TA: 		    FF 
+            |TA PRIO3 FF {
+              string opn = operadores.top();  operadores.pop();
+              string op2 = operandos.top();      operandos.pop();
+              string op1 = operandos.top();      operandos.pop();
+              string res = temporales.top();     temporales.pop();
+          
+              cuadruplos[idxCuad][0] = opn;
+              cuadruplos[idxCuad][1] = op1;
+              cuadruplos[idxCuad][2] = op2;
+              cuadruplos[idxCuad][3] = res;
+              idxCuad++;
+              operandos.push(res);
+            } 
             ;
 
-PRIO3: 	  	  MULT    {operadores.push("*");}
+PRIO3: 	  	MULT      {operadores.push("*");}
             | DIV     {operadores.push("/");}
             | AND     {operadores.push("AND");}
             ;
 
 
-FF:			  INTEGER {
-                int aux = $1;
-                operandos.push( int2string(aux)+" num");
-        }
-            | FLOATINGPOINT {
-        				float aux = $1;
-                operandos.push( float2string(aux)+" num" );  
-          }
+FF:			    INTEGER {
+              int aux = $1;
+              operandos.push( int2string(aux)+" num");
+            }
+            |FLOATINGPOINT {
+      				float aux = $1;
+              operandos.push( float2string(aux)+" num" );  
+            }
             | X1 OPAR E CPAR
             | X1 ID { 
-                      string pos = getIndex( $2 ); 
-                      if(pos != "-1"){ 
-                        operandos.push(pos);
-                      } else {
-                        cout << "VARIABLE NO EXISTE : "<< $2 <<endl;
-                        return -1;
-                      }
-                    } X3 ;
+              string pos = getIndex( $2 ); 
+              if(pos != "-1"){ 
+                operandos.push(pos);
+              } else {
+                cout << "VARIABLE NO EXISTE : "<< $2 <<endl;
+                return -1;
+              }
+            } X3 
+            ;
 
-X1:			     NOT | ;
-X3: 		     OB {
-	
-					if(f==0){
-						
-						node *n = new node();
-						n->d=0;
-						n->m=0;
-						n->next=NULL;
+X1:	    		NOT 
+            | {;} 
+            ;
+X3:         OB {
+      				if(f==0){
+      					node *n = new node();
+      					n->d=0;
+      					n->m=0;
+      					n->next=NULL;
+      					table[idx-1].dim = n;
+      					curr = n;
+      					f++;
+      				} else {
+      					node *n = new node();
+      					n->d=0;
+      					n->m=0;
+      					n->next=NULL;
+      					curr->next = n;
+      					curr = curr->next;
+      					f++;
+      				}
+				    } E {
+    					string re = operandos.top(); operandos.pop();
+    					L = L * string2int(re);
+    					(*curr).d = string2int(re);
+    				} CB X3 
+            | {;}
+            ;
 
-						table[idx-1].dim = n;
-						curr = n;
+ASSIGNDIM:    { // First positon
+				        dimPos++;
+        			 	if(dimPos == 1){
+        					string id = operandos.top(); operandos.pop();
+        					curr = table[ string2int(id) ].dim;
+        					//cout << "LET'S PRINT THE LL OF THIS VAR"<<endl;
+        					//displayLL(curr);
+        				}
+        			} OB E {
+        				// There's a next dimension
+        				if( curr->next ) {
+        					string re = operandos.top(); operandos.pop();
+        					string res = temporales.top(); temporales.pop();
 
-						f++;
+        					// GENERAR CUADRUPLO
+        					cuadruplos[idxCuad][0] = "*";
+                	cuadruplos[idxCuad][1] = re ;
+                	cuadruplos[idxCuad][2] = int2string( (*curr).m ) ;
+                	cuadruplos[idxCuad][3] = res;
+        					idxCuad++; 
 
-					} else {
-						
-						node *n = new node();
-						n->d=0;
-						n->m=0;
-						n->next=NULL;
+           				int auxx = (string2int(re)*(*curr).m) ;
+            			operandos.push( int2string(auxx) );
 
-						curr->next = n;
-						curr = curr->next;
+        				}
+        				// There has been two or more dimensions
+        				if(dimPos >= 2){
+        					string op1 = operandos.top(); operandos.pop();
+        					string op2 = operandos.top(); operandos.pop();
+        					string res = temporales.top(); temporales.pop();
+        					
+                  // GENERAR CUADRUPLO
+        					cuadruplos[idxCuad][0] = "+";
+                	cuadruplos[idxCuad][1] = op1 ;
+                	cuadruplos[idxCuad][2] = op2 ;
+                	cuadruplos[idxCuad][3] = res;
+        					idxCuad++; 					
 
-						f++;
+           				int auxr = string2int(op1) + string2int(op2);
+            			operandos.push( int2string(auxr) );
+        				}
 
-					}
+        				// Last dimension
+        				if(curr->next == NULL){
+        					string re = operandos.top(); operandos.pop();
+        					string res = temporales.top(); temporales.pop();
+        					
+                  // GENERAR CUADRUPLO
+        					cuadruplos[idxCuad][0] = "+";
+                  cuadruplos[idxCuad][1] = re ;
+                	cuadruplos[idxCuad][2] = int2string( (*curr).m ); // The base
+                	cuadruplos[idxCuad][3] = res;
+        					idxCuad++; 
 
-				} E {
-					string re = operandos.top(); operandos.pop();
-					L = L * string2int(re);
-					(*curr).d = string2int(re);
+           				int auxx = ( string2int(re) + (*curr).m ) ;
+            			operandos.push( int2string(auxx) );
+        				}
+        				curr = curr->next;
 
-				} CB X3 | ;
-
-XDIM:		{
-				// First positon
-				dimPos++;
-
-
-				if(dimPos == 1){
-					string id = operandos.top(); operandos.pop();
-					curr = table[ string2int(id) ].dim;
-					/*cout << "-------------------"<<endl;
-					cout << "LET'S PRINT THE LL OF THIS VAR"<<endl;
-					displayLL(curr);
-					cout << "-------------------"<<endl;*/
-				}
-
-
-			} OB E {
-				// existe una siguiente dimension
-				if( curr->next ) {
-					string re = operandos.top(); operandos.pop();
-					string res = temporales.top(); temporales.pop();
-					// GENERAR CUADRUPLO
-					cuadruplos[idxCuad][0] = "*";
-        	cuadruplos[idxCuad][1] = re ;
-        	cuadruplos[idxCuad][2] = int2string( (*curr).m ) ;
-        	cuadruplos[idxCuad][3] = res;
-					idxCuad++; 
-
-   				int auxx = (string2int(re)*(*curr).m) ;
-    			operandos.push( int2string(auxx) );
-    			//curr = curr->next;
-
-				}
-
-				// ya hay dos o mas dimensiones
-				if(dimPos >= 2){
-					string op1 = operandos.top(); operandos.pop();
-					string op2 = operandos.top(); operandos.pop();
-					string res = temporales.top(); temporales.pop();
-
-					// GENERAR CUADRUPLO
-					cuadruplos[idxCuad][0] = "+";
-        	cuadruplos[idxCuad][1] = op1 ;
-        	cuadruplos[idxCuad][2] = op2 ;
-        	cuadruplos[idxCuad][3] = res;
-					idxCuad++; 					
-
-          
-   				int auxr = string2int(op1) + string2int(op2);
-    			operandos.push( int2string(auxr) );
-				}
-
-				// ultima dimension
-				if(curr->next == NULL){
-					string re = operandos.top(); operandos.pop();
-					string res = temporales.top(); temporales.pop();
-					// GENERAR CUADRUPLO
-					cuadruplos[idxCuad][0] = "+";
-          cuadruplos[idxCuad][1] = re ;
-        	cuadruplos[idxCuad][2] = int2string( (*curr).m ) ;
-        	cuadruplos[idxCuad][3] = res;
-					idxCuad++; 
-
-   				int auxx = ( string2int(re) + (*curr).m ) ;
-    			operandos.push( int2string(auxx) );
-				}
-
-				curr = curr->next;
-
-
-			} CB XDIM | ;
+        			} CB ASSIGNDIM 
+              | {;}
+              ;
 
 
 %%
