@@ -20,13 +20,13 @@ stack<string> operadores;
 stack<string> operandos;
 stack<string> temporales;
 stack<int> saltos;
-int idxCuad = 0;
 
 string cuadruplos[100][4];
+int idxCuad = 0;
 
 struct Element{
-	string varname;
-	string vartype;
+	string name;
+	string type;
 	struct node *dim;
 };
 
@@ -51,7 +51,24 @@ int idxMem = 0;
 
 int baseMem = 0;
 
-std::stringstream ss;
+string int2string(int var){
+  std::stringstream conv;
+  conv << var;
+  return conv.str();
+}
+
+string float2string(float var){
+  std::stringstream conv;
+  conv << var;
+  return conv.str();
+}
+
+int string2int(string var){
+  int result;
+  istringstream convert(var);
+  if(!(convert >> result)) result=-1;
+  return result;
+}
 
 string trim(string str){
     size_t first = str.find_first_not_of(' ');
@@ -61,16 +78,14 @@ string trim(string str){
 
 string getIndex(string var){
   for(int i=0; i < idx; i++){
-    if(table[i].varname == var ){
-        ss.str(std::string());
-        ss << i;
-        return ss.str();
+    if(table[i].name == var ){
+        return int2string(i);
     }
   }
   return "-1";
 }
 
-stack<int> printstackInt(stack<int> q){
+stack<int> printStackInt(stack<int> q){
 	stack<int> ret;
 	stack<int> ret2;
  	while(!q.empty()){
@@ -92,7 +107,7 @@ stack<int> printstackInt(stack<int> q){
 	return ret2;
 }
 
-stack<string> printstackString(stack<string> q){
+stack<string> printStackString(stack<string> q){
 	stack<string> ret;
 	stack<string> ret2;
  	while(!q.empty()){
@@ -115,13 +130,12 @@ stack<string> printstackString(stack<string> q){
 }
 
 void displayLL(struct node *d){
-	//cout << (d)<<":("<<(*d).d << ","<<(*d).m<<")->"<<(*d).next<<endl;;
 	while( d != NULL ){
 		cout << (d)<<":("<<(*d).d << ","<<(*d).m<<")->"<<(*d).next<<endl;
 		d=(*d).next;
 	}
-
 }
+
 
 
 %}
@@ -136,216 +150,180 @@ void displayLL(struct node *d){
 %token <string> MAIN DEF NUM LETT IF ELSE FOR DO WHILE OPAR CPAR OKEY CKEY SEMICOLON EQUAL QUOTE STRING ID LT GT LET GET EQU NEQ PLUS MINUS MULT DIV AND OR NOT OB CB COMMA 
 %token <integer> INTEGER
 %token <fp> FLOATINGPOINT
-%type <string> ROOT M FUNCTS FUNCT BLOCK  X    STMT I IE F W DW E PRIO1 ES PRIO2 TA PRIO3 FF X1 X3  DECL
+%type <string> ROOT M FUNCTS FUNCT BLOCK X STMT I IE F W DW E PRIO1 ES PRIO2 TA PRIO3 FF X1 X3  DECL XDIM
 
 
 %%
 
-ROOT:       FUNCTS M {
-				cout << "    OK ROOT" << endl<<endl;
-				int impr;
-				cout << "TABLA DE SIMBOLOS"<<endl;
-    			cout << "Num of variables: "<<idx<<endl;
-				for(impr=0; impr<idx; impr++){
-					cout << impr<<"|"<< table[impr].varname << "|"<< table[impr].vartype <<"|"<< table[impr].dim << endl;
+ROOT:         FUNCTS M {
+                cout << "    OK ROOT" << endl<<endl;
+				        int impr;
+				        cout << "TABLA DE SIMBOLOS"<<endl;
+                cout << "Num of variables: "<<idx<<endl;
+                for(impr=0; impr<idx; impr++){
+                  cout << impr<<"|"<< table[impr].name << "|"<< table[impr].type <<"|"<< table[impr].dim << endl;
+                }
+                cout << "CUADRUPLO"<<endl;
+                for(impr=0; impr<idxCuad; impr++){
+                  cout << impr << "\t";
+                  for(int c=0; c<4; c++){
+                    cout << cuadruplos[impr][c] << " ";
+                  }
+                  cout << endl;
+                }
+                // Vacias Pilas, operandos, operadores, temporales, saltos
 
-				}
-
-	            cout << "CUADRUPLO"<<endl;
-	            for(impr=0; impr<idxCuad; impr++){
-	              cout << impr << "\t";
-	              for(int c=0; c<4; c++){
-	              	 cout << cuadruplos[impr][c] << " ";
-	              }
-
-	              cout << endl;
-	            }
-      // Vacias Pilas, operandos, operadores, temporales, saltos
-
-      /*cout << "LAS PILAS QUEDARON :"<<endl;
-      cout << "operandos"<<endl;
-      printstackString(operandos);
-      cout <<endl;
-      cout << "operadores"<<endl;
-      printstackString(operadores);
-      cout <<endl;
-      cout << "temporales"<<endl;
-      printstackString(temporales);
-      cout <<endl;
-      cout << "saltos"<<endl;
-      printstackInt(saltos);
-      cout <<endl;*/
+                /*cout << "LAS PILAS QUEDARON :"<<endl;
+                cout << "operandos"<<endl;
+                printStackString(operandos);
+                cout <<endl;
+                cout << "operadores"<<endl;
+                printStackString(operadores);
+                cout <<endl;
+                cout << "temporales"<<endl;
+                printStackString(temporales);
+                cout <<endl;
+                cout << "saltos"<<endl;
+                printStackInt(saltos);
+                cout <<endl;*/
 
 
-			}
+            }
             ;
 
-FUNCTS:	      FUNCT FUNCTS {printf("MANY-FUNCTS \n");}
-	    	    |  {;}
+FUNCTS:     FUNCT FUNCTS 
+	    	    |
 	    	    ;
 
-FUNCT:        DEF ID BLOCK        {;}
+FUNCT:      DEF ID BLOCK
             ;
 
-M:            MAIN BLOCK          {;}
+M:          MAIN BLOCK
             ;
 
-BLOCK:        OKEY LIST CKEY      {;}
+BLOCK:      OKEY LIST CKEY
             | STMT SEMICOLON
             ;
 
-LIST:         STMT SEMICOLON LIST
+LIST:       STMT SEMICOLON LIST
             |
             ;
 
-STMT:     	
-              I       		{;}
-            | F       		{;}
-            | W       		{;}
-            | DW     		{;}
+STMT:     	I
+            | F
+            | W
+            | DW
             | DECL
             | ID {
-                  string aux = $1;
-                  if( std::string::npos != aux.find("=") ){ // It has an =
-                    aux = trim(aux.substr(0, aux.find("=")));
-                  } else if ( std::string::npos != aux.find(";") ){ // It has an ;
-                    aux = trim(aux.substr(0, aux.find(";")));
-                  } else if ( std::string::npos != aux.find("[") ){ // It has a [ 
-                  	aux = trim(aux.substr(0, aux.find("[")));
-                  }
-                  operandos.push(getIndex(aux));
+                string aux = $1;
+                if( std::string::npos != aux.find("=") ){ // It has an =
+                  aux = trim(aux.substr(0, aux.find("=")));
+                } else if ( std::string::npos != aux.find(";") ){ // It has an ;
+                  aux = trim(aux.substr(0, aux.find(";")));
+                } else if ( std::string::npos != aux.find("[") ){ // It has a [ 
+                	aux = trim(aux.substr(0, aux.find("[")));
+                }
+                operandos.push(getIndex(aux));
 
-                  dimPos=0; // Whenever it finds a new ID, its dimension starts in 0
+                dimPos=0; // Whenever it finds a new ID, its dimension starts in 0
 
-              } X33 {
-
-              	string re = operandos.top(); operandos.pop();
+            } XDIM {
+                string re = operandos.top(); operandos.pop();
               	re = "["+re+"]";
               	operandos.push(re);
-
-
-
-
-
-              }EQUAL E {
-                  string re = operandos.top();      operandos.pop();
-                  string id = operandos.top();      operandos.pop();
-                  
-                  cuadruplos[idxCuad][0] = "=";
-                  cuadruplos[idxCuad][1] = re;
-                  cuadruplos[idxCuad][2] = id;
-                  
-                  idxCuad++;  
-              }
-
+            } EQUAL E {
+                string re = operandos.top();      operandos.pop();
+                string id = operandos.top();      operandos.pop();
+                 
+                cuadruplos[idxCuad][0] = "=";
+                cuadruplos[idxCuad][1] = re;
+                cuadruplos[idxCuad][2] = id;
+                
+                idxCuad++;  
+            }
             | ID OPAR CPAR
             ;
 
+DECL:       NUM ID {
+              string aux = $2;
+              table[idx].name = aux;
+              table[idx].type = "num";
+              table[idx].dim     = NULL;
+              f=0;
+              L=1;
+              baseMem++;
 
+              operandos.push( int2string(idx) );
+              idx=idx+1;
+            } X3 {
 
-DECL:		  NUM ID {
-                string aux = $2;
-                table[idx].varname = aux;
-                table[idx].vartype = "num";
-                table[idx].dim     = NULL;
-                f=0;
-                L=1;
-                baseMem++;
-
-                ss.str(std::string());
-                ss << idx;
-                operandos.push(ss.str());
-                idx=idx+1;
-        } X3 {
-
-				if(f==1){
-					curr = table[idx-1].dim;
-					curr->m = baseMem-1;
-					baseMem = (baseMem-1)+curr->d;
-
-				} else if(f>1) {
-					curr = table[idx-1].dim;
-
-					int indice=1;
-
-					(*curr).m = L/(*curr).d;
-
-					while( curr->next != NULL){
-
-						int mi = (*curr).m; // mi-1, because we haven't moved. Just checked that there's something next 
-
-						curr = curr->next; // OK, move
-
-						(*curr).m = mi / (*curr).d; // in i position, do mi = mi-1 / di
-
-						indice++;
-
-					}
-
-					(*curr).m =  (baseMem-1); // Last current, so, this. Is the last node because its next is null
-					baseMem = (baseMem -1) + L;
-
-				}
-
-
-				/*cout << " DIMENSIONES :"<< f << endl;
-				cout << " L:"<< L << endl;
-				cout << " --- LISTA:"<<endl;
-				displayLL( table[idx-1].dim );	
-				cout <<endl<<endl;*/
-
-				} X 
-			| LETT ID {
-                string aux = $2;
-                table[idx].varname = aux;
-                table[idx].vartype = "lett";
-                table[idx].dim     = NULL;
-                f=0;
-                L=1;
-                baseMem++;
-
-                ss.str(std::string());
-                ss << idx;
-                operandos.push(ss.str());
-                idx=idx+1;
-        } Y
-			;
-
-X:            EQUAL INTEGER  {
-                  string aux = $1;
-                  string re = trim(aux.substr(aux.find("=")+1, aux.size() ) ); // get integer
-                  string id = operandos.top();      operandos.pop();
-                  
-                  cuadruplos[idxCuad][0] = "=";
-                  cuadruplos[idxCuad][1] = re+" num";
-                  cuadruplos[idxCuad][2] = id;
-                  idxCuad++;
-              }	
-			      | EQUAL FLOATINGPOINT {
-                  string aux = $1;
-                  string re = trim(aux.substr(aux.find("=")+1, aux.size() ) );
-                  string id = operandos.top();      operandos.pop();
-                  
-                  cuadruplos[idxCuad][0] = "=";
-                  cuadruplos[idxCuad][1] = re + " num";
-                  cuadruplos[idxCuad][2] = id;
-                  idxCuad++;
-              } 
-            | {
-                // Sacamos lo que hay aqui porque no hay nada en X, para evitar que esta referencia se quede en el stack
-                operandos.pop();
+              if(f==1){
+                curr = table[idx-1].dim;
+                curr->m = baseMem-1;
+                baseMem = (baseMem-1)+curr->d;
+              } else if(f>1) {
+                curr = table[idx-1].dim;
+                int indice=1;
+                (*curr).m = L/(*curr).d;
+                while( curr->next != NULL){
+                  int mi = (*curr).m; // mi-1, because we haven't moved. Just checked that there's something next 
+                  curr = curr->next; // OK, move
+                  (*curr).m = mi / (*curr).d; // in i position, do mi = mi-1 / di
+                  indice++;
+                }
+                (*curr).m =  (baseMem-1); // Last current, so, this. Is the last node because its next is null
+                baseMem = (baseMem -1) + L;
               }
+            } X 
+            |LETT ID {
+              string aux = $2;
+              table[idx].name = aux;
+              table[idx].type = "lett";
+              table[idx].dim     = NULL;
+              f=0;
+              L=1;
+              baseMem++;
+
+              operandos.push( int2string(idx) );
+              idx=idx+1;
+            } Y
             ;
 
-Y:           EQUAL STRING {
-                  string aux = $1;
-                  string re = trim(aux.substr(aux.find("=")+1, aux.size() ) );
-                  string id = operandos.top();      operandos.pop();
-                  cuadruplos[idxCuad][0] = "=";
-                  cuadruplos[idxCuad][1] = re;
-                  cuadruplos[idxCuad][3] = id;
-                  idxCuad++;
-              } 
+X:          EQUAL INTEGER  {
+              string aux = $1;
+              string re = trim(aux.substr(aux.find("=")+1, aux.size() ) ); // get integer
+              string id = operandos.top();      operandos.pop();
+              
+              cuadruplos[idxCuad][0] = "=";
+              cuadruplos[idxCuad][1] = re+" num";
+              cuadruplos[idxCuad][2] = id;
+              idxCuad++;
+            }	
+			      |EQUAL FLOATINGPOINT {
+              string aux = $1;
+              string re = trim(aux.substr(aux.find("=")+1, aux.size() ) );
+              string id = operandos.top();      operandos.pop();
+              
+              cuadruplos[idxCuad][0] = "=";
+              cuadruplos[idxCuad][1] = re + " num";
+              cuadruplos[idxCuad][2] = id;
+              idxCuad++;
+            } 
+            |{
+              // Sacamos lo que hay aqui porque no hay nada en X, para evitar que esta referencia se quede en el stack
+              operandos.pop();
+            }
+            ;
+
+Y:          EQUAL STRING {
+              string aux = $1;
+              string re = trim(aux.substr(aux.find("=")+1, aux.size() ) );
+              string id = operandos.top();      operandos.pop();
+              cuadruplos[idxCuad][0] = "=";
+              cuadruplos[idxCuad][1] = re;
+              cuadruplos[idxCuad][3] = id;
+              idxCuad++;
+            } 
             |
             ;
 
@@ -354,18 +332,14 @@ I:          IF OPAR E CPAR {
               // Pendiente validar que el tipo sea bool. Tendria que usar un stack de tipos o algo asi
               
               cuadruplos[idxCuad][0] = "GOTOF";
-              ss.str(std::string());
-              ss << re;
-              cuadruplos[idxCuad][1] = ss.str();
+              cuadruplos[idxCuad][1] = re;
               idxCuad++;
               saltos.push(idxCuad-1);
                             
             } BLOCK IE {
               int dir = saltos.top(); saltos.pop();
               // Rellena con idxCuad lo que se obtuvo en dir
-              ss.str(std::string());
-              ss << idxCuad;
-              cuadruplos[dir][2] = ss.str();
+              cuadruplos[dir][2] = int2string(idxCuad);
             }
             ;
 
@@ -375,9 +349,7 @@ IE:         ELSE {
               idxCuad++;
               saltos.push(idxCuad-1);
               // Rellena con idxCuad lo que se obtuvo en dir
-              ss.str(std::string());
-              ss << idxCuad;
-              cuadruplos[dir][2] = ss.str();
+              cuadruplos[dir][2] = int2string(idxCuad);
 
             } BLOCK                  {;}
             |                           {;}
@@ -390,9 +362,7 @@ ASSIGN:     ID {
               string re = trim(aux.substr(aux.find("=")+1, aux.size() ) );
               string id = operandos.top(); operandos.pop();
               cuadruplos[idxCuad][0] = "=";
-              ss.str(string());
-              ss << re + " num";
-              cuadruplos[idxCuad][1] = ss.str();
+              cuadruplos[idxCuad][1] = re + " num";
               cuadruplos[idxCuad][2] = id;
               idxCuad++;
 
@@ -424,15 +394,11 @@ F:          FOR OPAR ASSIGN SEMICOLON E CPAR {
 
               // Cuadruplo para volver a evaluar la entrada al for
               cuadruplos[idxCuad][0] = "GOTO";
-              ss.str(string());
-              ss << dir2;
-              cuadruplos[idxCuad][1] = ss.str();
+              cuadruplos[idxCuad][1] = int2string(dir2);
               idxCuad++;
 
               // Rellenar GOTOF
-              ss.str(string());
-              ss << idxCuad;
-              cuadruplos[dir1][2] = ss.str();
+              cuadruplos[dir1][2] = int2string(idxCuad);
 
             }
             ;
@@ -459,15 +425,11 @@ W:          WHILE {
               int dir1 = saltos.top(); saltos.pop();
               int dir2 = saltos.top(); saltos.pop();
               cuadruplos[idxCuad][0] = "GOTO";
-              ss.str(std::string());
-              ss << dir2;
-              cuadruplos[idxCuad][1] = ss.str();
+              cuadruplos[idxCuad][1] = int2string(dir2);
               idxCuad++;
 
               // Rellena con idxCuad lo que se obtuvo en dir
-              ss.str(std::string());
-              ss << idxCuad;
-              cuadruplos[dir1][2] = ss.str();
+              cuadruplos[dir1][2] = int2string(idxCuad);
 
 
             };
@@ -482,11 +444,8 @@ DW:         DO {
 
               cuadruplos[idxCuad][0] = "GOTOV";
               cuadruplos[idxCuad][1] = re;
-              ss.str(std::string());
-              ss << dir;
-              cuadruplos[idxCuad][2] = ss.str();
+              cuadruplos[idxCuad][2] = int2string(dir);
               idxCuad++;
-
             }
             ;
 
@@ -561,16 +520,12 @@ PRIO3: 	  	  MULT    {operadores.push("*");}
 
 
 FF:			  INTEGER {
-                float aux = ($1)/1.0;
-                ss.str(std::string());
-                ss << aux << " num " ;
-                operandos.push(ss.str());
+                int aux = $1;
+                operandos.push( int2string(aux)+" num");
         }
             | FLOATINGPOINT {
-        				float aux = ($1)/1.0;
-                ss.str(std::string());
-                ss << aux << " num " ;
-                operandos.push(ss.str());  
+        				float aux = $1;
+                operandos.push( float2string(aux)+" num" );  
           }
             | X1 OPAR E CPAR
             | X1 ID { 
@@ -614,29 +569,19 @@ X3: 		     OB {
 
 				} E {
 					string re = operandos.top(); operandos.pop();
-					int aux;
-					istringstream convert(re);
-					if(!(convert >> aux)) aux=-1;
-					L = L*aux;
-
-					(*curr).d = aux;
-
+					L = L * string2int(re);
+					(*curr).d = string2int(re);
 
 				} CB X3 | ;
 
-X33:		{
+XDIM:		{
 				// First positon
 				dimPos++;
 
 
 				if(dimPos == 1){
 					string id = operandos.top(); operandos.pop();
-
-					int aux;
-					istringstream convert(id);
-					if(!(convert >> aux)) aux=-1;
-
-					curr = table[aux].dim;
+					curr = table[ string2int(id) ].dim;
 					/*cout << "-------------------"<<endl;
 					cout << "LET'S PRINT THE LL OF THIS VAR"<<endl;
 					displayLL(curr);
@@ -651,25 +596,14 @@ X33:		{
 					string res = temporales.top(); temporales.pop();
 					// GENERAR CUADRUPLO
 					cuadruplos[idxCuad][0] = "*";
-                  	cuadruplos[idxCuad][1] = re ;
-                  	ss.str(std::string());
-               		ss << (*curr).m;
-                  	cuadruplos[idxCuad][2] = ss.str() ;
-                  	cuadruplos[idxCuad][3] = res;
+        	cuadruplos[idxCuad][1] = re ;
+        	cuadruplos[idxCuad][2] = int2string( (*curr).m ) ;
+        	cuadruplos[idxCuad][3] = res;
 					idxCuad++; 
 
-					// string to int
-					int aux;
-					istringstream convert(re);
-					if(!(convert >> aux)) aux=-1;
-
-   					int auxx = (aux*(*curr).m) ;
-   					// int to string
-					ss.str(string());
-   					ss << auxx;
-    				operandos.push( ss.str() );
-
-    				//curr = curr->next;
+   				int auxx = (string2int(re)*(*curr).m) ;
+    			operandos.push( int2string(auxx) );
+    			//curr = curr->next;
 
 				}
 
@@ -681,26 +615,14 @@ X33:		{
 
 					// GENERAR CUADRUPLO
 					cuadruplos[idxCuad][0] = "+";
-                  	cuadruplos[idxCuad][1] = op1 ;
-                  	cuadruplos[idxCuad][2] = op2 ;
-                  	cuadruplos[idxCuad][3] = res;
+        	cuadruplos[idxCuad][1] = op1 ;
+        	cuadruplos[idxCuad][2] = op2 ;
+        	cuadruplos[idxCuad][3] = res;
 					idxCuad++; 					
 
-					// string to int
-					int aux1;
-					istringstream convert(op1);
-					if(!(convert >> aux1)) aux1=-1;
-
-					// string to int
-					int aux2;
-					istringstream convert2(op2);
-					if(!(convert2 >> aux2)) aux2=-1;
-
-   					int auxr = aux1+aux2;
-   					// int to string
-					ss.str(string());
-   					ss << auxr;
-    				operandos.push( ss.str() );
+          
+   				int auxr = string2int(op1) + string2int(op2);
+    			operandos.push( int2string(auxr) );
 				}
 
 				// ultima dimension
@@ -709,31 +631,19 @@ X33:		{
 					string res = temporales.top(); temporales.pop();
 					// GENERAR CUADRUPLO
 					cuadruplos[idxCuad][0] = "+";
-                  	cuadruplos[idxCuad][1] = re ;
-                  	ss.str(std::string());
-               		ss << (*curr).m;
-                  	cuadruplos[idxCuad][2] = ss.str() ;
-                  	cuadruplos[idxCuad][3] = res;
+          cuadruplos[idxCuad][1] = re ;
+        	cuadruplos[idxCuad][2] = int2string( (*curr).m ) ;
+        	cuadruplos[idxCuad][3] = res;
 					idxCuad++; 
 
-					int aux;
-					istringstream convert(re);
-					if(!(convert >> aux)) aux=-1;
-   					int auxx= (aux+(*curr).m) ;
-					ss.str(string());
-   					ss << auxx;
-    				operandos.push( ss.str() );
-
-    				
-					//curr = curr->next;
-
+   				int auxx = ( string2int(re) + (*curr).m ) ;
+    			operandos.push( int2string(auxx) );
 				}
-
 
 				curr = curr->next;
 
 
-			} CB X33 | ;
+			} CB XDIM | ;
 
 
 %%
@@ -743,14 +653,9 @@ void  yyerror(char const *s) {
 }
 
 int  main(void) {
-
   for(int i=60; i>0; i--){
-    ss.str(string());
-    ss << i;
-    temporales.push("T"+ss.str());
+    temporales.push("T"+int2string(i));
   }
-
   return yyparse ();   //  yyparse  is  defined  for us by flex
-
 }
 

@@ -1,3 +1,15 @@
+def hola {
+	num hola;
+	hola = 1+2*3;	
+
+}
+
+def adios{
+	num adios;
+	adios = adios+1;
+
+}
+
 main {
 	num d;
 	num e[5];
@@ -5,7 +17,7 @@ main {
 	num b[7][6];
 	num c[10];
 
-	c[0]=34;
+	c[0]=34.56;
 	a[4][2][1]=45;
 
 	b[6][0]=1;
