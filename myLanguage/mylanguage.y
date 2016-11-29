@@ -24,6 +24,8 @@ stack<int> saltos;
 string cuadruplos[100][4];
 int idxCuad = 0;
 
+bool nodim=true;
+
 struct Element{
 	string name;
 	string type;
@@ -228,9 +230,16 @@ ASSIGN:     ID {
                 dimPos=0; // Whenever it finds a new ID, its dimension starts in 0
 
             } ASSIGNDIM {
-                string re = operandos.top(); operandos.pop();
-              	re = "["+re+"]";
-              	operandos.push(re);
+            	cout <<endl<<"POSDIM:"<<dimPos<<endl;
+            	if(dimPos >=1){
+					string re = operandos.top(); operandos.pop();
+              		re = "["+re+"]";
+              		operandos.push(re);
+              		cout << "-D-"<<endl;
+              	} else if(dimPos == 0){
+              		cout << "-ND-"<<endl;
+              	}
+                
             } EQUAL E {
                 string re = operandos.top();      operandos.pop();
                 string id = operandos.top();      operandos.pop();
@@ -571,6 +580,7 @@ ASSIGNDIM:    { // First positon
         			 	if(dimPos == 1){
         					string id = operandos.top(); operandos.pop();
         					curr = table[ string2int(id) ].dim;
+        					cout << "SIDIM"<<nodim<<endl;
         					//cout << "LET'S PRINT THE LL OF THIS VAR"<<endl;
         					//displayLL(curr);
         				}
@@ -626,7 +636,7 @@ ASSIGNDIM:    { // First positon
         				curr = curr->next;
 
         			} CB ASSIGNDIM 
-              | {;}
+              | {cout << "NO DIM";}
               ;
 
 
