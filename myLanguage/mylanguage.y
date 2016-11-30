@@ -47,8 +47,6 @@ int dimPos=0;
 
 node *curr = new node;
 
-
-int MEMORIA[100];
 int idxMem = 0;
 
 int baseMem = 0;
@@ -138,6 +136,118 @@ void displayLL(struct node *d){
 	}
 }
 
+void Ejecutor(){
+	int MEMSIM[100];
+	int MEMTEM[60];
+	int MEMDIM[100];
+	for(int i=0; i<idxCuad; i++){
+		string temp0 = cuadruplos[i][0];
+		string temp1 = cuadruplos[i][1];
+		string temp2 = cuadruplos[i][2];
+		string temp3 = cuadruplos[i][3];
+		
+
+		if( temp0 == "="){
+			if(temp1[0] == 'T'){
+				int idxTemp = string2int( temp1.substr(1) );
+				MEMSIM[ string2int(cuadruplos[i][2]) ] = MEMTEM[idxTemp];
+			} else {
+
+				int valor = string2int(trim(temp1.substr(0, temp1.find(" "))));
+				string num = trim(temp1.substr( temp1.find(" ")+1) );
+				/*cout <<"="<<endl;
+				cout <<"V:"<<valor;
+				cout <<"   N:"<< num <<endl;*/
+
+				if(num == "num"){ 	// De constante a variable
+					MEMSIM[ string2int(cuadruplos[i][2]) ] = valor;
+				} else {			// De variable a variable
+					MEMSIM[ string2int(cuadruplos[i][2]) ] =  MEMSIM[ string2int(cuadruplos[i][1]) ];
+				}
+			}
+
+		// FIN =
+		} else if(temp0 == "+") {
+			
+			int idxTemp3 = string2int( temp3.substr(1) );
+
+			if(temp1[0] == 'T'){ // El primero es temporal
+				int idxTemp1 = string2int( temp1.substr(1) );
+
+				if(temp2[0] == 'T'){ // El segundo es temporal
+					int idxTemp2 = string2int( temp2.substr(1) );
+
+					// Temporal + temporal
+					MEMTEM[idxTemp3] = MEMTEM[idxTemp1] + MEMTEM[ idxTemp2];
+
+				} else { // El segundo es variable o numero
+
+					int valor2 = string2int(trim(temp2.substr(0, temp2.find(" "))));
+					string num2 = trim(temp2.substr( temp2.find(" ")+1) );
+
+					if(num2 == "num"){ 	// De temporal + constante
+						MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] + valor2;
+					} else {			// De temporal + variable
+						MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] + MEMSIM[ string2int(cuadruplos[i][2]) ];
+					}
+				}
+
+			} else { 		// El primero es variable o numero
+				int valor1 = string2int(trim(temp1.substr(0, temp1.find(" "))));
+				string num1 = trim(temp1.substr( temp1.find(" ")+1) );
+
+				if(num1 == "num"){ 	// Constante + ...
+
+					if(temp2[0] == 'T'){ // Constante + Temporal
+						int idxTemp2 = string2int( temp2.substr(1) );
+						MEMTEM[ idxTemp3 ] = valor1 + MEMTEM[ idxTemp2 ];
+					} else {		// Constante + variable o numero 
+						int valor2 = string2int(trim(temp2.substr(0, temp2.find(" "))));
+						string num2 = trim(temp2.substr( temp2.find(" ")+1) );
+
+						if(num2 == "num"){ 	// Constante + Constante
+							MEMTEM[ idxTemp3 ] = valor1 + valor2;
+						} else {			// Constante + Variable
+							MEMTEM[ idxTemp3 ] =  valor1 + MEMSIM[ string2int(cuadruplos[i][2]) ];
+						}
+					}
+				} else {			// Variable + ...
+
+					if(temp2[0] == 'T'){ // Variable + Temporal
+
+						int idxTemp2 = string2int( temp2.substr(1) );
+						MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] + MEMTEM[ idxTemp2 ];
+
+					} else {		// Variable + variable o numero 
+						
+						int valor2 = string2int(trim(temp2.substr(0, temp2.find(" "))));
+						string num2 = trim(temp2.substr( temp2.find(" ")+1) );
+
+						if(num2 == "num"){ 	// Variable + Constante
+							
+							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] + valor2;
+
+						} else {			// Variable + Variable
+							
+							MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] + MEMSIM[ string2int(cuadruplos[i][2]) ];
+						
+						}
+					}
+				}
+			}
+		
+		//FIN +
+		}
+	}
+
+	cout << "MEMORIA SIMPLE:"<<endl;
+	for(int m=0; m<idx; m++){
+		cout << m<<" "<<MEMSIM[m]<<endl;
+
+	}
+}
+
+
 %}
 
 %union {
@@ -186,6 +296,10 @@ ROOT:       FUNCTS M {
               cout << "saltos"<<endl;
               printStackInt(saltos);
               cout <<endl;*/
+
+              cout << "EJECUTOR"<<endl;
+              Ejecutor();
+
             }
             ;
 
@@ -647,7 +761,7 @@ void  yyerror(char const *s) {
 }
 
 int  main(void) {
-  for(int i=60; i>0; i--){
+  for(int i=60; i>=0; i--){
     temporales.push("T"+int2string(i));
   }
   return yyparse ();   //  yyparse  is  defined  for us by flex
