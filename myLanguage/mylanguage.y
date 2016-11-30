@@ -167,28 +167,54 @@ void Ejecutor(){
 			}
 
 		// FIN =
-		} else if(temp0 == "+") {
+		} else if(temp0 == "+" || temp0 == "-" || temp0 == "*" || temp0 == "/" ) {
 			
 			int idxTemp3 = string2int( temp3.substr(1) );
 
-			if(temp1[0] == 'T'){ // El primero es temporal
+			if(temp1[0] == 'T'){ 		// El primero es temporal ...
 				int idxTemp1 = string2int( temp1.substr(1) );
 
-				if(temp2[0] == 'T'){ // El segundo es temporal
+				if(temp2[0] == 'T'){ 	// El segundo es temporal
 					int idxTemp2 = string2int( temp2.substr(1) );
 
-					// Temporal + temporal
-					MEMTEM[idxTemp3] = MEMTEM[idxTemp1] + MEMTEM[ idxTemp2];
+					// Temporal ? temporal
+					if( temp0 == "+" ) {
+						MEMTEM[idxTemp3] = MEMTEM[idxTemp1] + MEMTEM[ idxTemp2];
+					} else if( temp0 == "-" ) {
+						MEMTEM[idxTemp3] = MEMTEM[idxTemp1] - MEMTEM[ idxTemp2];
+					} else if( temp0 == "*" ) {
+						MEMTEM[idxTemp3] = MEMTEM[idxTemp1] * MEMTEM[ idxTemp2];
+					} else if( temp0 == "/" ) {
+						MEMTEM[idxTemp3] = MEMTEM[idxTemp1] / MEMTEM[ idxTemp2];
+					}
+					
 
-				} else { // El segundo es variable o numero
+				} else { 				// El segundo es variable o numero ...
 
 					int valor2 = string2int(trim(temp2.substr(0, temp2.find(" "))));
 					string num2 = trim(temp2.substr( temp2.find(" ")+1) );
 
-					if(num2 == "num"){ 	// De temporal + constante
-						MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] + valor2;
-					} else {			// De temporal + variable
-						MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] + MEMSIM[ string2int(cuadruplos[i][2]) ];
+					if(num2 == "num"){ 	// De temporal ? constante
+						if( temp0 == "+" ){
+							MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] + valor2;
+						} else if( temp0 == "-" ) {
+							MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] - valor2;
+						} else if( temp0 == "*" ) {
+							MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] * valor2;
+						} else if( temp0 == "/" ) {
+							MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] / valor2;
+						}
+
+					} else {			// De temporal ? variable
+						if( temp0 == "+" ){
+							MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] + MEMSIM[ string2int(cuadruplos[i][2]) ];
+						} else if( temp0 == "-" ) {
+							MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] - MEMSIM[ string2int(cuadruplos[i][2]) ];
+						} else if( temp0 == "*" ) {
+							MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] * MEMSIM[ string2int(cuadruplos[i][2]) ];
+						} else if( temp0 == "/" ) {
+							MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] / MEMSIM[ string2int(cuadruplos[i][2]) ];
+						}	
 					}
 				}
 
@@ -196,47 +222,102 @@ void Ejecutor(){
 				int valor1 = string2int(trim(temp1.substr(0, temp1.find(" "))));
 				string num1 = trim(temp1.substr( temp1.find(" ")+1) );
 
-				if(num1 == "num"){ 	// Constante + ...
+				if(num1 == "num"){ 	// Constante ? ...
 
-					if(temp2[0] == 'T'){ // Constante + Temporal
+					if(temp2[0] == 'T'){ // Constante ? Temporal
 						int idxTemp2 = string2int( temp2.substr(1) );
-						MEMTEM[ idxTemp3 ] = valor1 + MEMTEM[ idxTemp2 ];
+
+						if( temp0 == "+" ){
+							MEMTEM[ idxTemp3 ] = valor1 + MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "-" ) {
+							MEMTEM[ idxTemp3 ] = valor1 - MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "*" ) {
+							MEMTEM[ idxTemp3 ] = valor1 * MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "/" ) {
+							MEMTEM[ idxTemp3 ] = valor1 / MEMTEM[ idxTemp2 ];
+						}	
 					} else {		// Constante + variable o numero 
+
 						int valor2 = string2int(trim(temp2.substr(0, temp2.find(" "))));
 						string num2 = trim(temp2.substr( temp2.find(" ")+1) );
 
-						if(num2 == "num"){ 	// Constante + Constante
-							MEMTEM[ idxTemp3 ] = valor1 + valor2;
-						} else {			// Constante + Variable
-							MEMTEM[ idxTemp3 ] =  valor1 + MEMSIM[ string2int(cuadruplos[i][2]) ];
+						if(num2 == "num"){ 	// Constante ? Constante
+
+							if( temp0 == "+" ){
+								MEMTEM[ idxTemp3 ] = valor1 + valor2;
+							} else if( temp0 == "-" ) {
+								MEMTEM[ idxTemp3 ] = valor1 - valor2;
+							} else if( temp0 == "*" ) {
+								MEMTEM[ idxTemp3 ] = valor1 * valor2;
+							} else if( temp0 == "/" ) {
+								MEMTEM[ idxTemp3 ] = valor1 / valor2;
+							}	
+
+						} else {			// Constante ? Variable
+
+							if( temp0 == "+" ){
+								MEMTEM[ idxTemp3 ] =  valor1 + MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "-" ) {
+								MEMTEM[ idxTemp3 ] =  valor1 - MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "*" ) {
+								MEMTEM[ idxTemp3 ] =  valor1 * MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "/" ) {
+								MEMTEM[ idxTemp3 ] =  valor1 / MEMSIM[ string2int(cuadruplos[i][2]) ];
+							}
+
+							
 						}
 					}
 				} else {			// Variable + ...
 
-					if(temp2[0] == 'T'){ // Variable + Temporal
+					if(temp2[0] == 'T'){ // Variable ? Temporal
 
 						int idxTemp2 = string2int( temp2.substr(1) );
-						MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] + MEMTEM[ idxTemp2 ];
+
+						if( temp0 == "+" ){
+							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] + MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "-" ) {
+							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] - MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "*" ) {
+							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] * MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "/" ) {
+							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] / MEMTEM[ idxTemp2 ];
+						}
 
 					} else {		// Variable + variable o numero 
 						
 						int valor2 = string2int(trim(temp2.substr(0, temp2.find(" "))));
 						string num2 = trim(temp2.substr( temp2.find(" ")+1) );
 
-						if(num2 == "num"){ 	// Variable + Constante
-							
-							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] + valor2;
+						if(num2 == "num"){ 	// Variable ? Constante
 
-						} else {			// Variable + Variable
+							if( temp0 == "+" ){
+								MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] + valor2;
+							} else if( temp0 == "-" ) {
+								MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] - valor2;
+							} else if( temp0 == "*" ) {
+								MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] * valor2;
+							} else if( temp0 == "/" ) {
+								MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] / valor2;
+							}
 							
-							MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] + MEMSIM[ string2int(cuadruplos[i][2]) ];
-						
+						} else {			// Variable ? Variable
+
+							if( temp0 == "+" ){
+								MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] + MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "-" ) {
+								MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] - MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "*" ) {
+								MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] * MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "/" ) {
+								MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] / MEMSIM[ string2int(cuadruplos[i][2]) ];
+							}						
 						}
 					}
 				}
 			}
 		
-		//FIN +
+		//FIN +-*/
 		}
 	}
 
