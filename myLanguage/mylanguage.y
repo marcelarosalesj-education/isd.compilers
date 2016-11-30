@@ -146,13 +146,11 @@ void Ejecutor(){
 		string temp2 = cuadruplos[i][2];
 		string temp3 = cuadruplos[i][3];
 		
-
 		if( temp0 == "="){
 			if(temp1[0] == 'T'){
 				int idxTemp = string2int( temp1.substr(1) );
 				MEMSIM[ string2int(cuadruplos[i][2]) ] = MEMTEM[idxTemp];
 			} else {
-
 				int valor = string2int(trim(temp1.substr(0, temp1.find(" "))));
 				string num = trim(temp1.substr( temp1.find(" ")+1) );
 				/*cout <<"="<<endl;
@@ -166,8 +164,9 @@ void Ejecutor(){
 				}
 			}
 
-		// FIN =
-		} else if(temp0 == "+" || temp0 == "-" || temp0 == "*" || temp0 == "/" ) {
+		} else if(temp0 == "+" || temp0 == "-" || temp0 == "*" || temp0 == "/" ||
+				  temp0 == ">" || temp0 == "<" || temp0 == "<=" || temp0 == ">=" ||  
+				  temp0 == "==" || temp0 == "!=" || temp0 == "AND" || temp0 == "OR" ) {
 			
 			int idxTemp3 = string2int( temp3.substr(1) );
 
@@ -186,7 +185,23 @@ void Ejecutor(){
 						MEMTEM[idxTemp3] = MEMTEM[idxTemp1] * MEMTEM[ idxTemp2];
 					} else if( temp0 == "/" ) {
 						MEMTEM[idxTemp3] = MEMTEM[idxTemp1] / MEMTEM[ idxTemp2];
-					}
+					} else if( temp0 == ">" ) {
+						MEMTEM[idxTemp3] = MEMTEM[idxTemp1] > MEMTEM[ idxTemp2];
+					} else if( temp0 == "<" ) {
+						MEMTEM[idxTemp3] = MEMTEM[idxTemp1] < MEMTEM[ idxTemp2];
+					} else if( temp0 == ">=" ) {
+						MEMTEM[idxTemp3] = MEMTEM[idxTemp1] >= MEMTEM[ idxTemp2];
+					} else if( temp0 == "<=" ) {
+						MEMTEM[idxTemp3] = MEMTEM[idxTemp1] <= MEMTEM[ idxTemp2];
+					} else if( temp0 == "==" ) {
+						MEMTEM[idxTemp3] = MEMTEM[idxTemp1] == MEMTEM[ idxTemp2];
+					} else if( temp0 == "!=" ) {
+						MEMTEM[idxTemp3] = MEMTEM[idxTemp1] != MEMTEM[ idxTemp2];
+					} else if( temp0 == "AND" ) {
+						MEMTEM[idxTemp3] = MEMTEM[idxTemp1] && MEMTEM[ idxTemp2];
+					} else if( temp0 == "OR" ) {
+						MEMTEM[idxTemp3] = MEMTEM[idxTemp1] || MEMTEM[ idxTemp2];
+					} 
 					
 
 				} else { 				// El segundo es variable o numero ...
@@ -203,7 +218,23 @@ void Ejecutor(){
 							MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] * valor2;
 						} else if( temp0 == "/" ) {
 							MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] / valor2;
-						}
+						} else if( temp0 == ">" ) {
+							MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] > valor2;
+						} else if( temp0 == "<" ) {
+							MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] < valor2;
+						} else if( temp0 == ">=" ) {
+							MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] >= valor2;
+						} else if( temp0 == "<=" ) {
+							MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] <= valor2;
+						} else if( temp0 == "==" ) {
+							MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] == valor2;
+						} else if( temp0 == "!=" ) {
+							MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] != valor2;
+						} else if( temp0 == "AND" ) {
+							MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] && valor2;
+						} else if( temp0 == "OR" ) {
+							MEMTEM[ idxTemp3 ] = MEMTEM[ idxTemp1 ] || valor2;
+						} 
 
 					} else {			// De temporal ? variable
 						if( temp0 == "+" ){
@@ -214,7 +245,25 @@ void Ejecutor(){
 							MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] * MEMSIM[ string2int(cuadruplos[i][2]) ];
 						} else if( temp0 == "/" ) {
 							MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] / MEMSIM[ string2int(cuadruplos[i][2]) ];
-						}	
+						} else if( temp0 == ">" ) {
+							MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] > MEMSIM[ string2int(cuadruplos[i][2]) ];
+						} else if( temp0 == "<" ) {
+							MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] < MEMSIM[ string2int(cuadruplos[i][2]) ];
+						} else if( temp0 == ">=" ) {
+							MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] >= MEMSIM[ string2int(cuadruplos[i][2]) ];
+						} else if( temp0 == "<=" ) {
+							MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] <= MEMSIM[ string2int(cuadruplos[i][2]) ];
+						} else if( temp0 == "==" ) {
+							MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] == MEMSIM[ string2int(cuadruplos[i][2]) ];
+						} else if( temp0 == "!=" ) {
+							MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] != MEMSIM[ string2int(cuadruplos[i][2]) ];
+						} else if( temp0 == "AND" ) {
+							MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] && MEMSIM[ string2int(cuadruplos[i][2]) ];
+						} else if( temp0 == "OR" ) {
+							MEMTEM[ idxTemp3 ] =  MEMTEM[ idxTemp1 ] || MEMSIM[ string2int(cuadruplos[i][2]) ];
+						} 
+ 
+
 					}
 				}
 
@@ -235,7 +284,24 @@ void Ejecutor(){
 							MEMTEM[ idxTemp3 ] = valor1 * MEMTEM[ idxTemp2 ];
 						} else if( temp0 == "/" ) {
 							MEMTEM[ idxTemp3 ] = valor1 / MEMTEM[ idxTemp2 ];
-						}	
+						} else if( temp0 == ">" ) {
+							MEMTEM[ idxTemp3 ] = valor1 > MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "<" ) {
+							MEMTEM[ idxTemp3 ] = valor1 < MEMTEM[ idxTemp2 ];
+						} else if( temp0 == ">=" ) {
+							MEMTEM[ idxTemp3 ] = valor1 >= MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "<=" ) {
+							MEMTEM[ idxTemp3 ] = valor1 <= MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "==" ) {
+							MEMTEM[ idxTemp3 ] = valor1 == MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "!=" ) {
+							MEMTEM[ idxTemp3 ] = valor1 != MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "AND" ) {
+							MEMTEM[ idxTemp3 ] = valor1 && MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "OR" ) {
+							MEMTEM[ idxTemp3 ] = valor1 || MEMTEM[ idxTemp2 ];
+						} 
+
 					} else {		// Constante + variable o numero 
 
 						int valor2 = string2int(trim(temp2.substr(0, temp2.find(" "))));
@@ -251,7 +317,23 @@ void Ejecutor(){
 								MEMTEM[ idxTemp3 ] = valor1 * valor2;
 							} else if( temp0 == "/" ) {
 								MEMTEM[ idxTemp3 ] = valor1 / valor2;
-							}	
+							} else if( temp0 == ">" ) {
+								MEMTEM[ idxTemp3 ] = valor1 > valor2;
+							} else if( temp0 == "<" ) {
+								MEMTEM[ idxTemp3 ] = valor1 < valor2;
+							} else if( temp0 == ">=" ) {
+								MEMTEM[ idxTemp3 ] = valor1 >= valor2;
+							} else if( temp0 == "<=" ) {
+								MEMTEM[ idxTemp3 ] = valor1 <= valor2;
+							} else if( temp0 == "==" ) {
+								MEMTEM[ idxTemp3 ] = valor1 == valor2;
+							} else if( temp0 == "!=" ) {
+								MEMTEM[ idxTemp3 ] = valor1 != valor2;
+							} else if( temp0 == "AND" ) {
+								MEMTEM[ idxTemp3 ] = valor1 && valor2;
+							} else if( temp0 == "OR" ) {
+								MEMTEM[ idxTemp3 ] = valor1 || valor2;
+							} 
 
 						} else {			// Constante ? Variable
 
@@ -263,9 +345,24 @@ void Ejecutor(){
 								MEMTEM[ idxTemp3 ] =  valor1 * MEMSIM[ string2int(cuadruplos[i][2]) ];
 							} else if( temp0 == "/" ) {
 								MEMTEM[ idxTemp3 ] =  valor1 / MEMSIM[ string2int(cuadruplos[i][2]) ];
-							}
+							} else if( temp0 == ">" ) {
+								MEMTEM[ idxTemp3 ] =  valor1 > MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "<" ) {
+								MEMTEM[ idxTemp3 ] =  valor1 < MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == ">=" ) {
+								MEMTEM[ idxTemp3 ] =  valor1 >= MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "<=" ) {
+								MEMTEM[ idxTemp3 ] =  valor1 <= MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "==" ) {
+								MEMTEM[ idxTemp3 ] =  valor1 == MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "!=" ) {
+								MEMTEM[ idxTemp3 ] =  valor1 != MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "AND" ) {
+								MEMTEM[ idxTemp3 ] =  valor1 && MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "OR" ) {
+								MEMTEM[ idxTemp3 ] =  valor1 || MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} 
 
-							
 						}
 					}
 				} else {			// Variable + ...
@@ -282,7 +379,25 @@ void Ejecutor(){
 							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] * MEMTEM[ idxTemp2 ];
 						} else if( temp0 == "/" ) {
 							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] / MEMTEM[ idxTemp2 ];
-						}
+						} else if( temp0 == ">" ) {
+							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] > MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "<" ) {
+							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] < MEMTEM[ idxTemp2 ];
+						} else if( temp0 == ">=" ) {
+							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] >= MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "<=" ) {
+							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] <= MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "==" ) {
+							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] == MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "!=" ) {
+							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] != MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "AND" ) {
+							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] && MEMTEM[ idxTemp2 ];
+						} else if( temp0 == "OR" ) {
+							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] || MEMTEM[ idxTemp2 ];
+						} 
+
+
 
 					} else {		// Variable + variable o numero 
 						
@@ -299,7 +414,23 @@ void Ejecutor(){
 								MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] * valor2;
 							} else if( temp0 == "/" ) {
 								MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] / valor2;
-							}
+							} else if( temp0 == ">" ) {
+								MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] > valor2;
+							} else if( temp0 == "<" ) {
+								MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] < valor2;
+							} else if( temp0 == ">=" ) {
+								MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] >= valor2;
+							} else if( temp0 == "<=" ) {
+								MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] <= valor2;
+							} else if( temp0 == "==" ) {
+								MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] == valor2;
+							} else if( temp0 == "!=" ) {
+								MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] != valor2;
+							} else if( temp0 == "AND" ) {
+								MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] && valor2;
+							} else if( temp0 == "OR" ) {
+								MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] || valor2;
+							} 
 							
 						} else {			// Variable ? Variable
 
@@ -311,15 +442,48 @@ void Ejecutor(){
 								MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] * MEMSIM[ string2int(cuadruplos[i][2]) ];
 							} else if( temp0 == "/" ) {
 								MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] / MEMSIM[ string2int(cuadruplos[i][2]) ];
-							}						
+							} else if( temp0 == ">" ) {
+								MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] > MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "<" ) {
+								MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] < MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == ">=" ) {
+								MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] >= MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "<=" ) {
+								MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] <= MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "==" ) {
+								MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] == MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "!=" ) {
+								MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] != MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "AND" ) {
+								MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] && MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} else if( temp0 == "OR" ) {
+								MEMTEM[ idxTemp3 ] =  MEMSIM[ string2int(cuadruplos[i][1]) ] || MEMSIM[ string2int(cuadruplos[i][2]) ];
+							} 
+ 
 						}
 					}
 				}
 			}
 		
-		//FIN +-*/
+		//FIN operaciones
+		} else if (temp0 == "GOTO"){
+			i = string2int(temp2)-1;
+
+		} else if (temp0 == "GOTOF") {
+			int idxTemp = string2int( temp1.substr(1) );
+			if( MEMTEM[idxTemp] == 0){ // Si es 0 es falso y entra
+				i = string2int(temp2)-1;
+			}
+			
+		} else if (temp0 == "GOTOV") {
+			int idxTemp = string2int( temp1.substr(1) );
+			if( MEMTEM[idxTemp] == 1 ){ // Es verdadero, y entra
+				i = string2int(temp2)-1;
+			}
 		}
-	}
+
+
+	}// FIN FOR CUADRUPLOS
 
 	cout << "MEMORIA SIMPLE:"<<endl;
 	for(int m=0; m<idx; m++){
@@ -543,7 +707,7 @@ I:          IF OPAR E CPAR {
             } BLOCK IE {
               int dir = saltos.top(); saltos.pop();
               // Rellena con idxCuad lo que se obtuvo en dir
-              cuadruplos[dir][2] = int2string(idxCuad);
+              cuadruplos[dir][2] = int2string(idxCuad); // RELLENA UN GOTOF
             }
             ;
 
@@ -553,7 +717,7 @@ IE:         ELSE {
               idxCuad++;
               saltos.push(idxCuad-1);
               // Rellena con idxCuad lo que se obtuvo en dir
-              cuadruplos[dir][2] = int2string(idxCuad);
+              cuadruplos[dir][2] = int2string(idxCuad); // LLENA GOTO 
 
             } BLOCK                  {;}
             |                           {;}
@@ -582,7 +746,7 @@ F:          FOR OPAR FORASSIGN SEMICOLON E CPAR {
 
               saltos.push(idxCuad-1);
 
-            } BLOCK OPAR ID2 EQUAL E CPAR{
+            } BLOCK OPAR ID2 EQUAL E CPAR {
               int dir1 = saltos.top(); saltos.pop();
               int dir2 = saltos.top(); saltos.pop();
 
@@ -596,7 +760,7 @@ F:          FOR OPAR FORASSIGN SEMICOLON E CPAR {
 
               // Cuadruplo para volver a evaluar la entrada al for
               cuadruplos[idxCuad][0] = "GOTO";
-              cuadruplos[idxCuad][1] = int2string(dir2);
+              cuadruplos[idxCuad][2] = int2string(dir2);
               idxCuad++;
 
               // Rellenar GOTOF
@@ -627,7 +791,7 @@ W:          WHILE {
               int dir1 = saltos.top(); saltos.pop();
               int dir2 = saltos.top(); saltos.pop();
               cuadruplos[idxCuad][0] = "GOTO";
-              cuadruplos[idxCuad][1] = int2string(dir2);
+              cuadruplos[idxCuad][2] = int2string(dir2);
               idxCuad++;
 
               // Rellena con idxCuad lo que se obtuvo en dir
