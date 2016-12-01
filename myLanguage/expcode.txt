@@ -1,0 +1,12 @@
+num c;
+num i;
+
+main {
+	c=2;
+	i=0;
+
+	while(i < 4){
+		c = 2 * c;
+		i=i+1;
+	};
+}
