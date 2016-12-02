@@ -1,0 +1,45 @@
+num a[2][2];
+num b[2][2];
+num r;
+num c;
+num val;
+num acum;
+num temp1;
+num temp2;
+num d[2][2];
+main{
+	val=0;
+	r=0;
+	while(r<2){
+		c=0;
+		while(c<2){
+			a[r][c]=val;
+			val=val+10;
+			c=c+1;
+		};
+		r=r+1;
+	};
+
+	val=4;
+	r=0;
+	while(r<2){
+		c=0;
+		while(c<2){
+			b[r][c]=val;
+			val=val+1;
+			c=c+1;
+		};
+		r=r+1;
+	};
+
+
+	for(r=0; r<2){
+		for(c=0; c<2){
+			temp1=a[r][c];
+			temp2=b[r][c];
+			d[r][c]= temp1+temp2;
+
+		}(c=c+1);
+	}(r=r+1);
+
+}
