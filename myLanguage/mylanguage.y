@@ -20,11 +20,17 @@ stack<string> operadores;
 stack<string> operandos;
 stack<string> temporales;
 stack<int> saltos;
+stack<int> returns;
 
-string cuadruplos[100][4];
+string cuadruplos[200][4];
 int idxCuad = 0;
 
 bool nodim=true;
+
+
+int MEMSIM[100];
+int MEMTEM[60];
+int MEMDIM[100];
 
 struct Element {
 	string name;
@@ -138,9 +144,7 @@ void displayLL(struct node *d){
 }
 
 void Ejecutor(){
-	int MEMSIM[100];
-	int MEMTEM[60];
-	int MEMDIM[100];
+
 	string auxtemp;
 	int idxDim;
 	for(int i=0; i<idxCuad; i++){
@@ -194,6 +198,7 @@ void Ejecutor(){
 						MEMDIM[ MEMTEM[idxDim] ] = valor;
 					} else { // ASIGNAR A MEMSIM
 						MEMSIM[ string2int( temp2 ) ] = valor;
+						//cout << " valor :" <<valor << " ... "<< MEMSIM[ string2int( temp2 ) ] << endl;
 					}
 					
 				} else {			// De variable a variable
@@ -535,6 +540,28 @@ void Ejecutor(){
 			if( MEMTEM[idxTemp] == 1 ){ // Es verdadero, y entra
 				i = string2int(temp2)-1;
 			}
+		} else if (temp0 == "CALL") {
+			returns.push(i);
+			i = string2int(temp2)-1;
+
+		} else if (temp0 == "RETURN"){
+			i = returns.top(); returns.pop();
+
+		} else if (temp0 == "INPUT"){
+			//char line[100];
+			//string inputVal;
+			cout << ">";
+			/*while(cin.good()){
+				cin.getline(line, sizeof(line)) ;
+				inputVal = string(line);
+				cout << "HOLA"<<inputVal;			
+			}*/
+			int inputVal;
+			cin >> inputVal;
+			//cout << "LEIDO" << inputVal << "|"<<endl;
+			//MEMSIM[string2int(temp2)] = string2int(inputVal);
+			MEMSIM[string2int(temp2)] = (inputVal);
+
 		}
 
 
@@ -582,18 +609,18 @@ void Ejecutor(){
 }
 
 %start  ROOT
-%token <string> MAIN DEF NUM LETT IF ELSE FOR DO WHILE OPAR CPAR OKEY CKEY SEMICOLON EQUAL QUOTE STRING ID LT GT LET GET EQU NEQ PLUS MINUS MULT DIV AND OR NOT OB CB COMMA 
+%token <string> MAIN DEF NUM LETT IF ELSE FOR DO WHILE OPAR CPAR OKEY CKEY SEMICOLON EQUAL QUOTE STRING ID LT GT LET GET EQU NEQ PLUS MINUS MULT DIV AND OR NOT OB CB COMMA CALL INPUT
 %token <integer> INTEGER
 %token <fp> FLOATINGPOINT
-%type <string> ROOT M FUNCTS FUNCT BLOCK X STMT I IE F W DW E PRIO1 ES PRIO2 TA PRIO3 FF X1 X3  DECL ASSIGNDIM FORASSIGN DECLS 
+%type <string> ROOT M FUNCTS FUNCT BLOCK X STMT I IE F W DW E PRIO1 ES PRIO2 TA PRIO3 FF X1 X3  DECL ASSIGNDIM FORASSIGN DECLS C GETINPUT
 
 
 %%
 
 ROOT:       DECLS {
 
-				//cuadruplos[idxCuad][0] = "GOTO";
-                //idxCuad++;  
+				cuadruplos[idxCuad][0] = "GOTO";
+                idxCuad++;  
 
 
 
@@ -615,6 +642,10 @@ ROOT:       DECLS {
                 }
 
 
+                if(table[impr].moduloInicio != -1){
+                	cout << ">" << table[impr].moduloInicio<<"<";
+                }
+
                 cout << endl;
               }
               cout << "CUADRUPLO"<<endl;
@@ -625,8 +656,6 @@ ROOT:       DECLS {
                 }
                 cout << endl;
               }
-
-
 
               // Vacias Pilas, operandos, operadores, temporales, saltos
               /*cout << "LAS PILAS QUEDARON :"<<endl;
@@ -741,15 +770,20 @@ FUNCTS:     FUNCT FUNCTS  {;}
 	    	    ;
 
 FUNCT:      DEF ID {
-				/*cout << " ID MOD :"<< $2;
 				table[idx].name = $2;
 				table[idx].moduloInicio = idxCuad;
 				idx++;
-				cout << "DECLFUNCT"<<endl;*/
-			} BLOCK
+			} BLOCK {
+				cuadruplos[idxCuad][0] = "RETURN";
+				idxCuad++;
+			}
             ;
 
-M:          MAIN BLOCK {;}
+M:          MAIN {
+				// Rellenas el primer cuadruplo para indicar el inicio del main
+				cuadruplos[0][2] = int2string(idxCuad);
+
+				} BLOCK {;}
             ;
 
 BLOCK:      OKEY LIST CKEY
@@ -760,13 +794,29 @@ LIST:       STMT SEMICOLON LIST
             |
             ;
 
-STMT:     	I
+STMT:     	  I
             | F
             | W
             | DW
             | ASSIGN    {;}
-            |           {;}
+            | C			{;}
+            | GETINPUT         {;}
             ;
+
+
+GETINPUT:	INPUT ID{
+				cuadruplos[idxCuad][0] = "INPUT";
+				cuadruplos[idxCuad][2] = getIndex($2);
+				idxCuad++;
+			}
+			;
+
+C:			CALL ID{
+				cuadruplos[idxCuad][0] = "CALL";
+				cuadruplos[idxCuad][2] = int2string(table[string2int(getIndex($2))].moduloInicio);
+				idxCuad++;
+			}
+			;
 
 ASSIGN:     ID {
                 string aux = $1;

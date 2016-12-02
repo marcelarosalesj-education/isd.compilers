@@ -4,13 +4,18 @@
 #include  <stdio.h>
 #include "mylanguage.tab.h"   // the  output  of  bison on  example0.y
 #include <iostream>
+#include <fstream> 
 using namespace std;
-
 
 extern void  yyerror(char const *s);   // we need to  forward  declare  these  functions ,
 
 
 #define YY_DECL extern "C" int yylex()
+
+ifstream a_stream ("prog5.txt", std::ifstream::in);
+#undef YY_INPUT
+#define YY_INPUT(buf,result,max) (result = a_stream.readsome(buf,max))
+
 
 %}
 
@@ -20,10 +25,9 @@ STRING          \"[a-zA-Z0-9]*\"
 ID              [a-z][a-z0-9]*
 
 %%
-"main"                    { return MAIN;
-                          }
-"def"                     { return DEF; 
-                          }
+"main"                    { return MAIN; }
+"def"                     { return DEF; }
+"call"                     { return CALL;}
 "num"                     { return NUM; }
 "lett"                    { return LETT;}
 "if"                      { return IF;}
@@ -54,6 +58,7 @@ ID              [a-z][a-z0-9]*
 "and"                     { return AND;}
 "or"                      { return OR;}
 "not"                     { return NOT;}
+"input"                   { return INPUT;}
 {INTEGER}                 {
                            //printf( "got INTEGER: %s (%d)\n", yytext, atoi(yytext));
                            yylval.integer = atoi(yytext);
