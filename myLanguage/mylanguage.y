@@ -141,6 +141,8 @@ void Ejecutor(){
 	int MEMSIM[100];
 	int MEMTEM[60];
 	int MEMDIM[100];
+	string auxtemp;
+	int idxDim;
 	for(int i=0; i<idxCuad; i++){
 		string temp0 = cuadruplos[i][0];
 		string temp1 = cuadruplos[i][1];
@@ -149,19 +151,63 @@ void Ejecutor(){
 		
 		if( temp0 == "="){
 			if(temp1[0] == 'T'){
-				int idxTemp = string2int( temp1.substr(1) );
-				MEMSIM[ string2int(cuadruplos[i][2]) ] = MEMTEM[idxTemp];
+				int idxTemp = string2int( temp1.substr(1) ); // Val de temp1
+
+				//cout << " ESTO: "<< temp1 << "  ES: "<<idxTemp<<endl;
+
+				if(temp2[0]=='['){ // ASIGNAR A MEMDIM
+					auxtemp = temp2.substr(2);
+					idxDim = string2int(auxtemp.erase(auxtemp.size()-1));
+
+					//cout << " ESTO: "<< temp2 << "  ES: "<<idxDim<<endl;
+
+					MEMDIM[ MEMTEM[idxDim] ] = MEMTEM[idxTemp];
+
+				} else { // ASIGNAR A MEMSIM
+					MEMSIM[ string2int(temp2) ] = MEMTEM[idxTemp];
+				}
+
+			} else if( temp1[0] == '[' ){
+				cout << "a";
+				auxtemp = temp1.substr(2);
+				cout << "b";
+				idxDim = string2int(auxtemp.erase(auxtemp.size()-1));
+				cout << "c"<<temp2<<endl;
+				MEMSIM[ string2int(temp2) ] = MEMDIM[ MEMTEM[ idxDim ] ];
+				cout << "d";
+				
+
+
+
 			} else {
 				int valor = string2int(trim(temp1.substr(0, temp1.find(" "))));
 				string num = trim(temp1.substr( temp1.find(" ")+1) );
-				/*cout <<"="<<endl;
-				cout <<"V:"<<valor;
-				cout <<"   N:"<< num <<endl;*/
 
 				if(num == "num"){ 	// De constante a variable
-					MEMSIM[ string2int(cuadruplos[i][2]) ] = valor;
+					
+					if(temp2[0]=='['){ // ASIGNAR A MEMDIM
+						auxtemp = temp2.substr(2);
+						idxDim = string2int(auxtemp.erase(auxtemp.size()-1));
+
+						//cout << " ESTO: "<< temp2 << "  ES: "<<idxDim<<endl;
+
+						MEMDIM[ MEMTEM[idxDim] ] = valor;
+					} else { // ASIGNAR A MEMSIM
+						MEMSIM[ string2int( temp2 ) ] = valor;
+					}
+					
 				} else {			// De variable a variable
-					MEMSIM[ string2int(cuadruplos[i][2]) ] =  MEMSIM[ string2int(cuadruplos[i][1]) ];
+					if(temp2[0]=='['){ // ASIGNAR A MEMDIM
+						auxtemp = temp2.substr(2);
+						idxDim = string2int(auxtemp.erase(auxtemp.size()-1));
+
+						//cout << " ESTO: "<< temp2 << "  ES: "<<idxDim<<endl;
+
+						MEMDIM[ MEMTEM[idxDim] ] = MEMSIM[ string2int( temp1 ) ];
+					} else { // ASIGNAR A MEMSIM
+						MEMSIM[ string2int( temp2 ) ] =  MEMSIM[ string2int( temp1 ) ];
+					}
+					
 				}
 			}
 
@@ -170,12 +216,17 @@ void Ejecutor(){
 				  temp0 == "==" || temp0 == "!=" || temp0 == "AND" || temp0 == "OR" ) {
 			
 			int idxTemp3 = string2int( temp3.substr(1) );
+			//cout << " ESTO: "<< temp3 << "  ES: "<<idxTemp3<<endl;
 
 			if(temp1[0] == 'T'){ 		// El primero es temporal ...
 				int idxTemp1 = string2int( temp1.substr(1) );
 
+				//cout << " ESTO: "<< temp1 << "  ES: "<<idxTemp1<<endl;
+
 				if(temp2[0] == 'T'){ 	// El segundo es temporal
 					int idxTemp2 = string2int( temp2.substr(1) );
+
+					//cout << " ESTO: "<< temp2 << "  ES: "<<idxTemp2<<endl;
 
 					// Temporal ? temporal
 					if( temp0 == "+" ) {
@@ -276,6 +327,7 @@ void Ejecutor(){
 
 					if(temp2[0] == 'T'){ // Constante ? Temporal
 						int idxTemp2 = string2int( temp2.substr(1) );
+						//cout << " ESTO: "<< temp2 << "  ES: "<<idxTemp2<<endl;
 
 						if( temp0 == "+" ){
 							MEMTEM[ idxTemp3 ] = valor1 + MEMTEM[ idxTemp2 ];
@@ -371,6 +423,8 @@ void Ejecutor(){
 					if(temp2[0] == 'T'){ // Variable ? Temporal
 
 						int idxTemp2 = string2int( temp2.substr(1) );
+
+						//cout << " ESTO: "<< temp2 << "  ES: "<<idxTemp2<<endl;
 
 						if( temp0 == "+" ){
 							MEMTEM[ idxTemp3 ] = MEMSIM[ string2int(cuadruplos[i][1]) ] + MEMTEM[ idxTemp2 ];
@@ -491,6 +545,31 @@ void Ejecutor(){
 		cout << m<<" "<<MEMSIM[m]<<endl;
 
 	}
+	cout << endl;
+	cout << "MEMORIA DIMENSIONADA:"<<endl;
+	  for(int md=0; md<idx; md++){
+
+	    struct node *iter = table[md].dim;
+	    if(iter != NULL){
+	    	cout << "NAME : " << table[md].name << endl;
+	    	int startloop = 0;
+	    	int endloop = 1;
+	    	// This loop finds the starting and ending mem address
+		    while(iter != NULL){		    	
+		    	endloop = endloop * iter->d;
+		    	if(iter->next == NULL){
+		    		startloop = iter->m;
+		    	}
+		    	iter = iter->next;
+		   	}
+		   	endloop = endloop+startloop;
+		   	// Prints memory
+		   	for(int pdim = startloop; pdim < endloop; pdim++){
+		   		cout << MEMDIM[pdim]<< endl;
+		   	}
+		    cout << "------"<<endl;
+	    }
+	  }
 }
 
 
@@ -506,7 +585,7 @@ void Ejecutor(){
 %token <string> MAIN DEF NUM LETT IF ELSE FOR DO WHILE OPAR CPAR OKEY CKEY SEMICOLON EQUAL QUOTE STRING ID LT GT LET GET EQU NEQ PLUS MINUS MULT DIV AND OR NOT OB CB COMMA 
 %token <integer> INTEGER
 %token <fp> FLOATINGPOINT
-%type <string> ROOT M FUNCTS FUNCT BLOCK X STMT I IE F W DW E PRIO1 ES PRIO2 TA PRIO3 FF X1 X3  DECL ASSIGNDIM FORASSIGN DECLS
+%type <string> ROOT M FUNCTS FUNCT BLOCK X STMT I IE F W DW E PRIO1 ES PRIO2 TA PRIO3 FF X1 X3  DECL ASSIGNDIM FORASSIGN DECLS 
 
 
 %%
@@ -525,9 +604,11 @@ ROOT:       DECLS {
               cout << "Num of variables: "<<idx<<endl;
               for(impr=0; impr<idx; impr++){
                 cout << impr<<"|"<< table[impr].name << "|"<< table[impr].type <<"|"<< table[impr].dim;
-                while(table[impr].dim != NULL){
-                	cout << "|" << table[impr].dim->d << "|" <<table[impr].dim->m;
-                	table[impr].dim = table[impr].dim->next;
+
+                struct node *iter = table[impr].dim;
+                while(iter != NULL){
+                	cout << "|" << iter->d << "|" <<iter->m;
+                	iter = iter->next;
                 }
                 if(table[impr].moduloInicio != -1){
                 	cout << "|"<< table[impr].moduloInicio;
@@ -544,8 +625,10 @@ ROOT:       DECLS {
                 }
                 cout << endl;
               }
-              // Vacias Pilas, operandos, operadores, temporales, saltos
 
+
+
+              // Vacias Pilas, operandos, operadores, temporales, saltos
               /*cout << "LAS PILAS QUEDARON :"<<endl;
               cout << "operandos"<<endl;
               printStackString(operandos);
@@ -699,15 +782,15 @@ ASSIGN:     ID {
                 dimPos=0; // Whenever it finds a new ID, its dimension starts in 0
 
             } ASSIGNDIM {
-            	cout <<endl<<"POSDIM:"<<dimPos<<endl;
+            	//cout <<endl<<"POSDIM:"<<dimPos<<endl;
             	if(dimPos >=1){
 					string re = operandos.top(); operandos.pop();
-					cout << "REEEE:" << re << endl;
+					//cout << "REEEE:" << re << endl;
               		re = "["+re+"]";
               		operandos.push(re);
-              		cout << "-D-"<<endl;
+              		//cout << "-D-"<<endl;
               	} else if(dimPos == 0){
-              		cout << "-ND-"<<endl;
+              		//cout << "-ND-"<<endl;
               	}
                 
             } EQUAL E {
@@ -717,12 +800,12 @@ ASSIGN:     ID {
                 cuadruplos[idxCuad][0] = "=";
                 cuadruplos[idxCuad][1] = re;
                 cuadruplos[idxCuad][2] = id;
+                //cout << "ID ES ? "<<id <<endl;
                 
                 idxCuad++;  
             }
             | ID OPAR CPAR
             ;
-
 
 
 I:          IF OPAR E CPAR {
@@ -925,14 +1008,45 @@ FF:			INTEGER {
             }
             | X1 OPAR E CPAR
             | X1 ID { 
-              string pos = getIndex( $2 ); 
+
+              string pos = getIndex( $2 );
+
               if(pos != "-1"){ 
                 operandos.push(pos);
+                cout  << " ID ES : "<< $2 << " POS "<< pos <<endl;
               } else {
                 cout << "VARIABLE NO EXISTE : "<< $2 <<endl;
                 return -1;
               }
-            } ASSIGNDIM 
+
+              //struct node *iter = table[string2int(pos)].dim;
+              if( table[string2int(pos)].dim != NULL ){
+              	cout << "  ES DIMENSIONADA   "<<table[string2int(pos)].name<<endl;
+              	dimPos=0;
+
+              } else {
+              	cout << " NO ES DIMENSIONADA  "<< table[string2int(pos)].name<<endl;
+
+
+              }
+              cout << "paso por aqui con : "<<$2<<endl;
+
+
+            } ASSIGNDIM {
+           
+            	cout << " OP : "<< operandos.top() << " en pos "<< dimPos<<endl; 
+            	// WORKAROUND SUPER MEGA HORRIBLE. PENDIENTE REVISAR
+            	// EL PROBLEMA ES QUE DIRECCIONA A VARSIMS Y VARDIMS COMO DIMS, Y NO DEBERIA
+            	if(dimPos >=1 && operandos.top()[0] == 'T'){ 
+					string re = operandos.top(); operandos.pop();
+              		re = "["+re+"]";
+              		operandos.push(re);
+              		cout << " RE ES "<< re << " dimPOS : " <<  dimPos<<endl;
+              	} else if(dimPos == 0){
+              		cout << "-ND-"<<endl;
+              	}
+                
+            }
             ;
 
 X1:	    	NOT 
@@ -976,6 +1090,8 @@ ASSIGNDIM:    	{
 					}
 				} OB E {
     				// There's a next dimension
+    				cout << " AAAA : ";
+    				cout << operandos.top() << endl;
     				if( curr->next ) {
     					string re = operandos.top(); operandos.pop();
     					string res = temporales.top(); temporales.pop();
@@ -986,8 +1102,6 @@ ASSIGNDIM:    	{
 	                	cuadruplos[idxCuad][2] = int2string( (*curr).m )+" num" ;
 	                	cuadruplos[idxCuad][3] = res;
     					idxCuad++; 
-
-
 
 	       				//int auxx = (string2int(re)*(*curr).m) ;
 	        			//operandos.push( int2string(auxx) );
@@ -1041,6 +1155,7 @@ void  yyerror(char const *s) {
 
 int  main(void) {
   for(int i=60; i>=0; i--){
+  //for(int i=0; i<=60; i++){
     temporales.push("T"+int2string(i));
   }
   return yyparse ();   //  yyparse  is  defined  for us by flex
