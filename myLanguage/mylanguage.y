@@ -168,13 +168,13 @@ void Ejecutor(){
 				}
 
 			} else if( temp1[0] == '[' ){
-				cout << "a";
+				//cout << "a";
 				auxtemp = temp1.substr(2);
-				cout << "b";
+				//cout << "b";
 				idxDim = string2int(auxtemp.erase(auxtemp.size()-1));
-				cout << "c"<<temp2<<endl;
+				//cout << "c"<<temp2<<endl;
 				MEMSIM[ string2int(temp2) ] = MEMDIM[ MEMTEM[ idxDim ] ];
-				cout << "d";
+				//cout << "d";
 				
 
 
@@ -1013,7 +1013,7 @@ FF:			INTEGER {
 
               if(pos != "-1"){ 
                 operandos.push(pos);
-                cout  << " ID ES : "<< $2 << " POS "<< pos <<endl;
+                //cout  << " ID ES : "<< $2 << " POS "<< pos <<endl;
               } else {
                 cout << "VARIABLE NO EXISTE : "<< $2 <<endl;
                 return -1;
@@ -1021,29 +1021,29 @@ FF:			INTEGER {
 
               //struct node *iter = table[string2int(pos)].dim;
               if( table[string2int(pos)].dim != NULL ){
-              	cout << "  ES DIMENSIONADA   "<<table[string2int(pos)].name<<endl;
+              	//cout << "  ES DIMENSIONADA   "<<table[string2int(pos)].name<<endl;
               	dimPos=0;
 
               } else {
-              	cout << " NO ES DIMENSIONADA  "<< table[string2int(pos)].name<<endl;
+              	//cout << " NO ES DIMENSIONADA  "<< table[string2int(pos)].name<<endl;
 
 
               }
-              cout << "paso por aqui con : "<<$2<<endl;
+              //cout << "paso por aqui con : "<<$2<<endl;
 
 
             } ASSIGNDIM {
            
-            	cout << " OP : "<< operandos.top() << " en pos "<< dimPos<<endl; 
+            	//cout << " OP : "<< operandos.top() << " en pos "<< dimPos<<endl; 
             	// WORKAROUND SUPER MEGA HORRIBLE. PENDIENTE REVISAR
             	// EL PROBLEMA ES QUE DIRECCIONA A VARSIMS Y VARDIMS COMO DIMS, Y NO DEBERIA
             	if(dimPos >=1 && operandos.top()[0] == 'T'){ 
 					string re = operandos.top(); operandos.pop();
               		re = "["+re+"]";
               		operandos.push(re);
-              		cout << " RE ES "<< re << " dimPOS : " <<  dimPos<<endl;
+              		//cout << " RE ES "<< re << " dimPOS : " <<  dimPos<<endl;
               	} else if(dimPos == 0){
-              		cout << "-ND-"<<endl;
+              		//cout << "-ND-"<<endl;
               	}
                 
             }
@@ -1084,14 +1084,14 @@ ASSIGNDIM:    	{
 				 	if(dimPos == 1){
 						string id = operandos.top(); operandos.pop();
 						curr = table[ string2int(id) ].dim;
-						cout << "SIDIM"<<nodim<<endl;
+						//cout << "SIDIM"<<nodim<<endl;
 						//cout << "LET'S PRINT THE LL OF THIS VAR"<<endl;
 						//displayLL(curr);
 					}
 				} OB E {
     				// There's a next dimension
-    				cout << " AAAA : ";
-    				cout << operandos.top() << endl;
+    				//cout << " AAAA : ";
+    				//cout << operandos.top() << endl;
     				if( curr->next ) {
     					string re = operandos.top(); operandos.pop();
     					string res = temporales.top(); temporales.pop();
@@ -1143,7 +1143,9 @@ ASSIGNDIM:    	{
     				}
     				curr = curr->next;
         		} CB ASSIGNDIM 
-              	| {cout << "NO DIM";}
+              	| {
+              		//cout << "NO DIM";
+              	  }
               	;
 
 
