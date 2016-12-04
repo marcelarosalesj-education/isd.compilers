@@ -5,9 +5,6 @@ num c;
 num val;
 num temp;
 num n;
-num var;
-num vari;
-num accum;
 
 def ini{
 	val=0;
