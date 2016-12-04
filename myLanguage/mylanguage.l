@@ -1,21 +1,22 @@
-  // mylanguage
-  // FLEX  file
 %{
 #include  <stdio.h>
-#include "mylanguage.tab.h"   // the  output  of  bison on  example0.y
+#include "mylanguage.tab.h"
 #include <iostream>
 #include <fstream> 
 using namespace std;
 
-extern void  yyerror(char const *s);   // we need to  forward  declare  these  functions ,
-
+extern void  yyerror(char const *s);
+extern void  FillTempStack();
 
 #define YY_DECL extern "C" int yylex()
 
-ifstream a_stream ("prog5.txt", std::ifstream::in);
+/* 
+  This let me receive the program as an ifstream object and tells Flex to parse that object. 
+  This way I can, later (in the Ejecutor) receive input from cin. 
+*/
+ifstream a_stream;
 #undef YY_INPUT
-#define YY_INPUT(buf,result,max) (result = a_stream.readsome(buf,max))
-
+#define YY_INPUT(buf, result, max) (result = a_stream.readsome(buf,max))
 
 %}
 
@@ -83,6 +84,20 @@ ID              [a-z][a-z0-9]*
 .                         {ECHO; yyerror("error");}
 
 %%
+
 int yywrap(){
   return 1;
+}
+
+int main(int argc, char** argv){
+
+  if(argc != 2){
+      cout << "USAGE: "<< argv[0]<< " <filename>"<<endl;
+      return -1;
+    } else {
+      a_stream.open(argv[1], std::ifstream::in);
+    }
+
+    FillTempStack();
+    return yyparse ();
 }

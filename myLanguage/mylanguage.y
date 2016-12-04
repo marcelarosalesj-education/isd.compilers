@@ -1,5 +1,3 @@
-  // mylanguage
-  //  BISON  file
 %{
 #include <stdio.h>
 #include <stdlib.h>
@@ -141,6 +139,14 @@ void displayLL(struct node *d){
 		cout << (d)<<":("<<(*d).d << ","<<(*d).m<<")->"<<(*d).next<<endl;
 		d=(*d).next;
 	}
+}
+
+
+void FillTempStack(){
+	for(int i=60; i>=0; i--){
+  	//for(int i=0; i<=60; i++){
+    	temporales.push("T"+int2string(i));
+  	}	
 }
 
 void Ejecutor(){
@@ -1204,12 +1210,3 @@ ASSIGNDIM:    	{
 void  yyerror(char const *s) {
 	fprintf (stderr, "%s\n", s);
 }
-
-int  main(void) {
-  for(int i=60; i>=0; i--){
-  //for(int i=0; i<=60; i++){
-    temporales.push("T"+int2string(i));
-  }
-  return yyparse ();   //  yyparse  is  defined  for us by flex
-}
-
