@@ -153,6 +153,8 @@ void Ejecutor(){
 
 	string auxtemp;
 	int idxDim;
+	string auxtemp2;
+	int idxDim2;
 	for(int i=0; i<idxCuad; i++){
 		string temp0 = cuadruplos[i][0];
 		string temp1 = cuadruplos[i][1];
@@ -169,8 +171,6 @@ void Ejecutor(){
 					auxtemp = temp2.substr(2);
 					idxDim = string2int(auxtemp.erase(auxtemp.size()-1));
 
-					//cout << " ESTO: "<< temp2 << "  ES: "<<idxDim<<endl;
-
 					MEMDIM[ MEMTEM[idxDim] ] = MEMTEM[idxTemp];
 
 				} else { // ASIGNAR A MEMSIM
@@ -178,17 +178,20 @@ void Ejecutor(){
 				}
 
 			} else if( temp1[0] == '[' ){
-				//cout << "a";
+
 				auxtemp = temp1.substr(2);
-				//cout << "b";
 				idxDim = string2int(auxtemp.erase(auxtemp.size()-1));
-				//cout << "c"<<temp2<<endl;
-				MEMSIM[ string2int(temp2) ] = MEMDIM[ MEMTEM[ idxDim ] ];
-				//cout << "d";
+
+				if(temp2[0]=='['){ // ASIGNAR A MEMDIM. FROM MEMDIM TO MEMDIM
+					auxtemp2 = temp2.substr(2);
+					idxDim2 = string2int(auxtemp2.erase(auxtemp2.size()-1));
+					MEMDIM[ MEMTEM[ idxDim2 ] ] = MEMDIM[ MEMTEM[ idxDim ] ];
+
+				} else { // ASIGNAR A MEMSIM
+					MEMSIM[ string2int(temp2) ] = MEMDIM[ MEMTEM[ idxDim ] ];
+				}
+
 				
-
-
-
 			} else {
 				int valor = string2int(trim(temp1.substr(0, temp1.find(" "))));
 				string num = trim(temp1.substr( temp1.find(" ")+1) );
@@ -199,12 +202,9 @@ void Ejecutor(){
 						auxtemp = temp2.substr(2);
 						idxDim = string2int(auxtemp.erase(auxtemp.size()-1));
 
-						//cout << " ESTO: "<< temp2 << "  ES: "<<idxDim<<endl;
-
 						MEMDIM[ MEMTEM[idxDim] ] = valor;
 					} else { // ASIGNAR A MEMSIM
 						MEMSIM[ string2int( temp2 ) ] = valor;
-						//cout << " valor :" <<valor << " ... "<< MEMSIM[ string2int( temp2 ) ] << endl;
 					}
 					
 				} else {			// De variable a variable
