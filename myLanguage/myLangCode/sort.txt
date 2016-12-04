@@ -1,28 +1,18 @@
 num a[10];
-num r;
-num c;
 num i;
 num j;
-num k;
 num val;
-num acum;
 num swap;
 num temp;
 num temp1;
 num temp2;
 num n;
 
-def ini{
-	a[0]= 15;
-	a[1]= 20;
-	a[2]= 10;
-	a[3]= 35;
-	a[4]= 40;
-	a[5]= 15;
-	a[6]=  5;
-	a[7]= 30;
-	a[8]= 50;
-	a[9]= 45;
+def ini{	
+	for(i=0; i<10){
+		input val;
+		a[i] = val;
+	}(i=i+1);
 }
 
 def sort{
