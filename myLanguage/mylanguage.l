@@ -13,6 +13,7 @@ extern void  FillTempStack();
 /* 
   This let me receive the program as an ifstream object and tells Flex to parse that object. 
   This way I can, later (in the Ejecutor) receive input from cin. 
+  YY_INPUT
 */
 ifstream a_stream;
 #undef YY_INPUT
