@@ -1,0 +1,45 @@
+num a[3][3];
+num b[3][3];
+num r;
+num c;
+num val;
+num temp;
+num n;
+num var;
+num vari;
+num accum;
+
+def ini{
+	val=0;
+	r=0;
+	n=3;
+	while(r<n){
+		c=0;
+		while(c<n){
+			input val;
+			a[r][c]=val;
+			val=val+10;
+			c=c+1;
+		};
+		r=r+1;
+	};
+
+}
+
+def traspuesta{
+	
+	for(r=0; r<n){
+		for(c=0; c<n){
+			temp = a[r][c];
+			b[c][r] = temp;
+		}(c=c+1);
+	}(r=r+1);
+	
+}
+
+
+main{
+	call ini;
+	call traspuesta;
+
+}

@@ -1,0 +1,19 @@
+num x;
+num cont;
+
+def digitos{
+	input x;
+	cont = 1;
+	while(x/10 != 0){
+		x = x/10;
+		cont = cont+1;
+	};
+
+}
+
+
+main{
+
+	call digitos;
+
+}
