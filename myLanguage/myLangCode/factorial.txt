@@ -1,7 +1,8 @@
 num a;	
 num b;
 main {
-	b=5;
+	
+	input b;
 	a=1;
 
 	while(b>0){

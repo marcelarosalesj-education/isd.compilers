@@ -5,9 +5,6 @@ num c;
 num val;
 num temp;
 num n;
-num var;
-num vari;
-num accum;
 
 def ini{
 	val=0;
@@ -30,8 +27,7 @@ def traspuesta{
 	
 	for(r=0; r<n){
 		for(c=0; c<n){
-			temp = a[r][c];
-			b[c][r] = temp;
+			b[c][r] = a[r][c];
 		}(c=c+1);
 	}(r=r+1);
 	
